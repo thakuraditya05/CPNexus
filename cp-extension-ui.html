@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CP Tracker — Extension UI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-void: #050810;
+    --bg-panel: rgba(10, 14, 28, 0.92);
+    --bg-card: rgba(15, 20, 40, 0.85);
+    --neon-cyan: #00f5ff;
+    --neon-green: #00ff88;
+    --neon-purple: #b347ff;
+    --neon-orange: #ff6b35;
+    --neon-yellow: #ffd700;
+    --text-primary: #e8eaf6;
+    --text-muted: #5a6380;
+    --text-dim: #8892b0;
+    --border-glow: rgba(0, 245, 255, 0.15);
+    --border-subtle: rgba(255,255,255,0.06);
+    --glass: rgba(255,255,255,0.03);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-void);
+    font-family: 'Syne', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    overflow-x: hidden;
+  }
+
+  /* Animated starfield background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(0,245,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, rgba(179,71,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 70%, rgba(0,255,136,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 80%, rgba(0,245,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 60%, rgba(179,71,255,0.2) 0%, transparent 100%),
+      radial-gradient(2px 2px at 35% 20%, rgba(0,255,136,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 65% 45%, rgba(255,107,53,0.2) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% -10%, rgba(0,245,255,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 100%, rgba(179,71,255,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(0,255,136,0.03) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    width: 420px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-bottom: 1px solid rgba(0,245,255,0.08);
+    border-radius: 20px 20px 0 0;
+    backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), transparent);
+    animation: scanline 3s ease-in-out infinite;
+  }
+
+  @keyframes scanline {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 20px rgba(0,245,255,0.4), 0 0 40px rgba(0,245,255,0.1);
+    animation: pulse-logo 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-logo {
+    0%, 100% { box-shadow: 0 0 20px rgba(0,245,255,0.4), 0 0 40px rgba(0,245,255,0.1); }
+    50% { box-shadow: 0 0 30px rgba(179,71,255,0.5), 0 0 60px rgba(179,71,255,0.15); }
+  }
+
+  .logo-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .logo-text span { color: var(--neon-cyan); }
+  .logo-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  .header-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .theme-toggle {
+    width: 44px;
+    height: 22px;
+    background: rgba(0,245,255,0.08);
+    border: 1px solid rgba(0,245,255,0.2);
+    border-radius: 11px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .theme-toggle::after {
+    content: '🌙';
+    position: absolute;
+    left: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    line-height: 1;
+    transition: all 0.3s;
+  }
+
+  .theme-toggle:hover { border-color: var(--neon-cyan); background: rgba(0,245,255,0.12); }
+
+  .icon-btn {
+    width: 28px;
+    height: 28px;
+    background: var(--glass);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+    color: var(--text-muted);
+  }
+
+  .icon-btn:hover {
+    border-color: rgba(179,71,255,0.4);
+    color: var(--neon-purple);
+    background: rgba(179,71,255,0.08);
+  }
+
+  /* ─── TAB NAV ─── */
+  .tab-nav {
+    display: flex;
+    background: rgba(8, 12, 24, 0.95);
+    border-left: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
+    border-bottom: 1px solid rgba(0,245,255,0.06);
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 2px;
+    padding: 6px 8px;
+  }
+
+  .tab-nav::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid transparent;
+  }
+
+  .tab:hover { color: var(--text-dim); background: var(--glass); }
+
+  .tab.active {
+    background: rgba(0,245,255,0.08);
+    border-color: rgba(0,245,255,0.2);
+    color: var(--neon-cyan);
+  }
+
+  /* ─── MAIN BODY ─── */
+  .body {
+    background: var(--bg-panel);
+    border-left: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ─── USER PROFILE STRIP ─── */
+  .profile-strip {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .profile-strip::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple));
+    border-radius: 3px 0 0 3px;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a1f3a, #2a1f3a);
+    border: 2px solid rgba(0,245,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(0,245,255,0.2);
+  }
+
+  .profile-info { flex: 1; }
+  .profile-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+  }
+
+  .profile-handle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .profile-stats {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+  }
+
+  .pstat {
+    text-align: center;
+  }
+
+  .pstat-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .pstat-label {
+    font-size: 8px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 1px;
+  }
+
+  .cyan { color: var(--neon-cyan); }
+  .green { color: var(--neon-green); }
+  .purple { color: var(--neon-purple); }
+  .orange { color: var(--neon-orange); }
+  .yellow { color: var(--neon-yellow); }
+
+  /* ─── STREAK ROW ─── */
+  .streak-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .streak-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .streak-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0,245,255,0.2);
+  }
+
+  .streak-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .streak-card.lc::after { background: var(--neon-orange); box-shadow: 0 0 8px var(--neon-orange); }
+  .streak-card.cf::after { background: var(--neon-cyan); box-shadow: 0 0 8px var(--neon-cyan); }
+  .streak-card.cc::after { background: var(--neon-yellow); box-shadow: 0 0 8px var(--neon-yellow); }
+  .streak-card.at::after { background: var(--neon-purple); box-shadow: 0 0 8px var(--neon-purple); }
+
+  .streak-platform {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .streak-fire { font-size: 20px; line-height: 1; }
+
+  .streak-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  .streak-days {
+    font-size: 8px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ─── CONTEST SECTION ─── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .section-title::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 6px var(--neon-cyan);
+    animation: blink 1.5s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .see-all {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--neon-cyan);
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .see-all:hover { opacity: 1; }
+
+  .contest-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .contest-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contest-item:hover {
+    border-color: rgba(0,245,255,0.15);
+    background: rgba(15,20,40,0.98);
+    transform: translateX(2px);
+  }
+
+  .contest-platform-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-lc { background: var(--neon-orange); box-shadow: 0 0 6px var(--neon-orange); }
+  .dot-cf { background: var(--neon-cyan); box-shadow: 0 0 6px var(--neon-cyan); }
+  .dot-cc { background: var(--neon-yellow); box-shadow: 0 0 6px var(--neon-yellow); }
+  .dot-at { background: var(--neon-purple); box-shadow: 0 0 6px var(--neon-purple); }
+
+  .contest-info { flex: 1; min-width: 0; }
+
+  .contest-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.01em;
+  }
+
+  .contest-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .contest-platform-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .contest-duration {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: var(--text-muted);
+  }
+
+  .contest-duration::before {
+    content: '·';
+    margin-right: 6px;
+    opacity: 0.4;
+  }
+
+  .contest-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-dim);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .contest-time.soon { color: var(--neon-green); text-shadow: 0 0 8px rgba(0,255,136,0.4); }
+
+  .star-btn {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    opacity: 0.3;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .star-btn:hover, .star-btn.starred { opacity: 1; filter: drop-shadow(0 0 4px var(--neon-yellow)); }
+
+  .gcal-btn {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    opacity: 0.3;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .gcal-btn:hover { opacity: 1; }
+
+  /* ─── QUICK LINKS ─── */
+  .quicklinks {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+
+  .ql-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 10px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .ql-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(179,71,255,0.25);
+    background: rgba(179,71,255,0.04);
+  }
+
+  .ql-icon { font-size: 20px; line-height: 1; }
+
+  .ql-label {
+    font-size: 8px;
+    color: var(--text-muted);
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ql-add {
+    background: var(--glass);
+    border: 1px dashed rgba(255,255,255,0.08);
+  }
+
+  .ql-add .ql-icon { color: var(--text-muted); font-size: 16px; }
+
+  /* ─── MANIT NOTIFIER ─── */
+  .notice-banner {
+    background: linear-gradient(135deg, rgba(255,107,53,0.07), rgba(255,215,0,0.05));
+    border: 1px solid rgba(255,107,53,0.2);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .notice-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,107,53,0.03), transparent);
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .notice-banner:hover { border-color: rgba(255,107,53,0.4); }
+
+  .notice-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--neon-orange);
+    box-shadow: 0 0 8px var(--neon-orange);
+    flex-shrink: 0;
+    animation: ping 1s ease-in-out infinite;
+  }
+
+  @keyframes ping {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.7; }
+  }
+
+  .notice-text { flex: 1; }
+
+  .notice-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--neon-orange);
+    letter-spacing: 0.02em;
+  }
+
+  .notice-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .notice-arrow {
+    font-size: 14px;
+    color: var(--neon-orange);
+    opacity: 0.6;
+  }
+
+  /* ─── ANALYTICS MINI ─── */
+  .analytics-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .analytics-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ac-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .ac-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .ac-sub {
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* mini bar chart */
+  .mini-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 28px;
+    margin-top: 8px;
+  }
+
+  .mini-bar {
+    flex: 1;
+    border-radius: 2px 2px 0 0;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .mini-bar:hover { opacity: 1; }
+
+  /* ─── THEME INJECTOR TOGGLE ─── */
+  .theme-injector {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ti-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(0,245,255,0.1), rgba(179,71,255,0.1));
+    border: 1px solid rgba(0,245,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .ti-info { flex: 1; }
+
+  .ti-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+  }
+
+  .ti-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .toggle-pill {
+    width: 40px;
+    height: 22px;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+    border-radius: 11px;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(0,245,255,0.3);
+    transition: all 0.3s;
+  }
+
+  .toggle-pill::after {
+    content: '';
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    transition: all 0.3s;
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    background: rgba(6, 9, 20, 0.97);
+    border: 1px solid var(--border-subtle);
+    border-top: 1px solid rgba(0,245,255,0.05);
+    border-radius: 0 0 20px 20px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(20px);
+  }
+
+  .footer-nav {
+    display: flex;
+    gap: 4px;
+  }
+
+  .fn-btn {
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .fn-btn:hover { color: var(--text-dim); background: var(--glass); }
+
+  .fn-btn.active {
+    background: rgba(0,245,255,0.08);
+    border-color: rgba(0,245,255,0.2);
+    color: var(--neon-cyan);
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: var(--text-muted);
+  }
+
+  .status-dot-live {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--neon-green);
+    box-shadow: 0 0 4px var(--neon-green);
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 0;
+  }
+
+  /* ─── RATING WIDGET ─── */
+  .rating-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .rating-card {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 10px 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rc-platform {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .rc-rating {
+    font-family: 'Space Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .rc-delta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .delta-up { color: var(--neon-green); }
+  .delta-down { color: #ff4757; }
+
+  .rc-rank {
+    font-size: 8px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* ─── SCROLL HINT ─── */
+  .scroll-fade {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: rgba(255,255,255,0.1);
+    letter-spacing: 0.1em;
+    padding: 4px 0;
+    text-transform: uppercase;
+  }
+
+  /* ─── GLASS OVERLAY TAG ─── */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .tag-live {
+    background: rgba(0,255,136,0.1);
+    border: 1px solid rgba(0,255,136,0.2);
+    color: var(--neon-green);
+  }
+
+  .tag-soon {
+    background: rgba(0,245,255,0.1);
+    border: 1px solid rgba(0,245,255,0.2);
+    color: var(--neon-cyan);
+  }
+
+  .tag-tmrw {
+    background: rgba(179,71,255,0.1);
+    border: 1px solid rgba(179,71,255,0.2);
+    color: var(--neon-purple);
+  }
+
+  /* Loading shimmer for cards */
+  @keyframes card-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .body > * {
+    animation: card-enter 0.4s ease forwards;
+  }
+
+  .body > *:nth-child(1) { animation-delay: 0.05s; opacity: 0; }
+  .body > *:nth-child(2) { animation-delay: 0.1s; opacity: 0; }
+  .body > *:nth-child(3) { animation-delay: 0.15s; opacity: 0; }
+  .body > *:nth-child(4) { animation-delay: 0.2s; opacity: 0; }
+  .body > *:nth-child(5) { animation-delay: 0.25s; opacity: 0; }
+  .body > *:nth-child(6) { animation-delay: 0.3s; opacity: 0; }
+  .body > *:nth-child(7) { animation-delay: 0.35s; opacity: 0; }
+  .body > *:nth-child(8) { animation-delay: 0.4s; opacity: 0; }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-area">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">CP<span>Nexus</span></div>
+        <div class="logo-sub">v2.0 · MANIT · Active</div>
+      </div>
+    </div>
+    <div class="header-controls">
+      <div class="theme-toggle"></div>
+      <div class="icon-btn">⚙</div>
+      <div class="icon-btn">◫</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-nav">
+    <div class="tab active">Dashboard</div>
+    <div class="tab">Contests</div>
+    <div class="tab">Analytics</div>
+    <div class="tab">Ratings</div>
+    <div class="tab">Settings</div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- PROFILE STRIP -->
+    <div class="profile-strip">
+      <div class="avatar">🧑‍💻</div>
+      <div class="profile-info">
+        <div class="profile-name">Rahul Sharma</div>
+        <div class="profile-handle">@rahul_dev · MANIT Bhopal</div>
+      </div>
+      <div class="profile-stats">
+        <div class="pstat">
+          <div class="pstat-val cyan">1847</div>
+          <div class="pstat-label">CF</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-val orange">1964</div>
+          <div class="pstat-label">LC</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-val green">4★</div>
+          <div class="pstat-label">CC</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STREAK ROW -->
+    <div class="streak-row">
+      <div class="streak-card lc">
+        <div class="streak-platform">LeetCode</div>
+        <div class="streak-fire">🔥</div>
+        <div class="streak-num orange">47</div>
+        <div class="streak-days">days</div>
+      </div>
+      <div class="streak-card cf">
+        <div class="streak-platform">Codeforces</div>
+        <div class="streak-fire">🔥</div>
+        <div class="streak-num cyan">23</div>
+        <div class="streak-days">days</div>
+      </div>
+      <div class="streak-card cc">
+        <div class="streak-platform">CodeChef</div>
+        <div class="streak-fire">🔥</div>
+        <div class="streak-num yellow">15</div>
+        <div class="streak-days">days</div>
+      </div>
+      <div class="streak-card at">
+        <div class="streak-platform">AtCoder</div>
+        <div class="streak-fire">🔥</div>
+        <div class="streak-num purple">8</div>
+        <div class="streak-days">days</div>
+      </div>
+    </div>
+
+    <!-- UPCOMING CONTESTS -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">Upcoming Contests</div>
+        <div class="see-all">see all →</div>
+      </div>
+      <div class="contest-list">
+
+        <div class="contest-item">
+          <div class="contest-platform-dot dot-cf"></div>
+          <div class="contest-info">
+            <div class="contest-name">Codeforces Round 987 (Div. 2)</div>
+            <div class="contest-meta">
+              <span class="contest-platform-label">Codeforces</span>
+              <span class="contest-duration">2h</span>
+            </div>
+          </div>
+          <span class="tag tag-live">LIVE</span>
+          <div class="star-btn starred">⭐</div>
+          <div class="gcal-btn">📅</div>
+        </div>
+
+        <div class="contest-item">
+          <div class="contest-platform-dot dot-lc"></div>
+          <div class="contest-info">
+            <div class="contest-name">LeetCode Weekly Contest 422</div>
+            <div class="contest-meta">
+              <span class="contest-platform-label">LeetCode</span>
+              <span class="contest-duration">1.5h</span>
+            </div>
+          </div>
+          <div class="contest-time soon">in 4h</div>
+          <div class="star-btn">⭐</div>
+          <div class="gcal-btn">📅</div>
+        </div>
+
+        <div class="contest-item">
+          <div class="contest-platform-dot dot-cc"></div>
+          <div class="contest-info">
+            <div class="contest-name">CodeChef Starters 117</div>
+            <div class="contest-meta">
+              <span class="contest-platform-label">CodeChef</span>
+              <span class="contest-duration">3h</span>
+            </div>
+          </div>
+          <span class="tag tag-tmrw">Tomorrow</span>
+          <div class="star-btn">⭐</div>
+          <div class="gcal-btn">📅</div>
+        </div>
+
+        <div class="contest-item">
+          <div class="contest-platform-dot dot-at"></div>
+          <div class="contest-info">
+            <div class="contest-name">AtCoder Beginner Contest 381</div>
+            <div class="contest-meta">
+              <span class="contest-platform-label">AtCoder</span>
+              <span class="contest-duration">1h 40m</span>
+            </div>
+          </div>
+          <div class="contest-time">in 2d</div>
+          <div class="star-btn starred">⭐</div>
+          <div class="gcal-btn">📅</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RATING WIDGETS -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">Rating Tracker</div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-card">
+          <div class="rc-platform">Codeforces</div>
+          <div class="rc-rating cyan">1847</div>
+          <div class="rc-delta delta-up">▲ +63 last contest</div>
+          <div class="rc-rank">Expert · Top 8.4%</div>
+        </div>
+        <div class="rating-card">
+          <div class="rc-platform">LeetCode</div>
+          <div class="rc-rating orange">1964</div>
+          <div class="rc-delta delta-down">▼ −12 last contest</div>
+          <div class="rc-rank">Knight · Top 5.1%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">Quick Links</div>
+      </div>
+      <div class="quicklinks">
+        <div class="ql-item">
+          <div class="ql-icon">🟡</div>
+          <div class="ql-label">LeetCode</div>
+        </div>
+        <div class="ql-item">
+          <div class="ql-icon">🔵</div>
+          <div class="ql-label">CF</div>
+        </div>
+        <div class="ql-item">
+          <div class="ql-icon">🐙</div>
+          <div class="ql-label">GitHub</div>
+        </div>
+        <div class="ql-item">
+          <div class="ql-icon">🟢</div>
+          <div class="ql-label">Hoppscotch</div>
+        </div>
+        <div class="ql-item ql-add">
+          <div class="ql-icon">＋</div>
+          <div class="ql-label">Add</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS MINI -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">This Month</div>
+      </div>
+      <div class="analytics-row">
+        <div class="analytics-card">
+          <div class="ac-label">Contests</div>
+          <div class="ac-value green">14</div>
+          <div class="ac-sub">↑ 3 more than last month</div>
+          <div class="mini-bars">
+            <div class="mini-bar" style="height:40%;background:var(--neon-orange)"></div>
+            <div class="mini-bar" style="height:60%;background:var(--neon-cyan)"></div>
+            <div class="mini-bar" style="height:30%;background:var(--neon-yellow)"></div>
+            <div class="mini-bar" style="height:80%;background:var(--neon-purple)"></div>
+            <div class="mini-bar" style="height:55%;background:var(--neon-orange)"></div>
+            <div class="mini-bar" style="height:100%;background:var(--neon-cyan)"></div>
+            <div class="mini-bar" style="height:70%;background:var(--neon-green)"></div>
+          </div>
+        </div>
+        <div class="analytics-card">
+          <div class="ac-label">Problems Solved</div>
+          <div class="ac-value purple">218</div>
+          <div class="ac-sub">🔥 Best month so far!</div>
+          <div class="mini-bars">
+            <div class="mini-bar" style="height:50%;background:var(--neon-purple)"></div>
+            <div class="mini-bar" style="height:70%;background:var(--neon-purple)"></div>
+            <div class="mini-bar" style="height:45%;background:var(--neon-purple)"></div>
+            <div class="mini-bar" style="height:90%;background:var(--neon-purple)"></div>
+            <div class="mini-bar" style="height:60%;background:var(--neon-purple)"></div>
+            <div class="mini-bar" style="height:100%;background:var(--neon-purple)"></div>
+            <div class="mini-bar" style="height:80%;background:var(--neon-purple)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MANIT NOTIFIER -->
+    <div class="notice-banner">
+      <div class="notice-dot"></div>
+      <div class="notice-text">
+        <div class="notice-title">🏫 MANIT Notice Update</div>
+        <div class="notice-sub">3 new notices · Last checked 8 min ago</div>
+      </div>
+      <div class="notice-arrow">›</div>
+    </div>
+
+    <!-- THEME INJECTOR -->
+    <div class="theme-injector">
+      <div class="ti-icon">🎨</div>
+      <div class="ti-info">
+        <div class="ti-title">Universal Theme Injector</div>
+        <div class="ti-sub">Active on: codeforces.com, atcoder.jp</div>
+      </div>
+      <div class="toggle-pill"></div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-nav">
+      <div class="fn-btn active">⊞ Home</div>
+      <div class="fn-btn">◫ Side Panel</div>
+      <div class="fn-btn">⚙ Config</div>
+    </div>
+    <div class="status-indicator">
+      <div class="status-dot-live"></div>
+      SYNCED
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

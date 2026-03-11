@@ -1,0 +1,120 @@
+.analyticsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  width: 100%;
+  animation: rise 0.5s ease 0.05s both;
+}
+
+/* ── TOP BAR ── */
+ 
+
+ 
+ 
+ 
+
+.timeFilter {
+  display: flex;
+  gap: 2px;
+}
+
+.tf {
+  padding: 4px 11px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--t3);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.tf:hover {
+  color: var(--t2);
+  background: var(--glass2);
+}
+
+.tf.active {
+  background: rgba(155, 89, 247, 0.1);
+  border-color: rgba(155, 89, 247, 0.25);
+  color: var(--purple);
+}
+
+/* ── SUMMARY PILLS ROW ── */
+/* .sp1::after { background: var(--green); box-shadow: 0 0 8px rgba(0, 255, 127, 0.4); }
+.sp2::after { background: var(--green); box-shadow: 0 0 8px rgba(0, 255, 127, 0.4); }
+.sp3::after { background: var(--yellow); box-shadow: 0 0 8px rgba(255, 200, 50, 0.4); }
+.sp4::after { background: var(--red); box-shadow: 0 0 8px rgba(255, 61, 90, 0.4); }
+.sp5::after { background: var(--purple); box-shadow: 0 0 8px rgba(155, 89, 247, 0.4); }
+.sp6::after { background: var(--orange); box-shadow: 0 0 8px rgba(255, 96, 48, 0.4); }
+
+.spLabel { font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--t3); margin-bottom: 4px; }
+.spVal { font-family: var(--big); font-size: 26px; letter-spacing: 0.04em; line-height: 1; }
+.spSub { font-family: var(--mono); font-size: 8px; margin-top: 3px; } */
+
+/* ── CHARTS GRID ── */
+.chartsGrid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr 0.9fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+  animation: rise 0.5s ease 0.15s both;
+}
+
+.cc {
+  background: var(--card);
+  border: 1px solid var(--b1);
+  border-radius: var(--r3);
+  padding: 14px 16px;
+  backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s;
+}
+
+.cc:hover { border-color: var(--b2); }
+
+.cc::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  border-radius: var(--r3) var(--r3) 0 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.cc:hover::before { opacity: 1; }
+
+.ccCyan::before { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+.ccGreen::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+.ccPurple::before { background: linear-gradient(90deg, transparent, var(--purple), transparent); }
+.ccOrange::before { background: linear-gradient(90deg, transparent, var(--orange), transparent); }
+.ccYellow::before { background: linear-gradient(90deg, transparent, var(--yellow), transparent); }
+.ccTeal::before { background: linear-gradient(90deg, transparent, var(--teal), transparent); }
+
+.span2r { grid-row: span 2; }
+.span2c { grid-column: span 2; } /* Add this for heatmap */
+
+/* Text colors */
+.up { color: var(--green); }
+.down { color: var(--red); }
+.cGreen { color: var(--green); }
+.cYellow { color: var(--yellow); }
+.cRed { color: var(--red); }
+.cCyan { color: var(--cyan); }
+.cPurple { color: var(--purple); }
+.cOrange { color: var(--orange); }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

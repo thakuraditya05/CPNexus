@@ -1,0 +1,100 @@
+/* ══════════════════════════════════════════════
+   MASTER WRAPPER & BACKGROUND EFFECTS
+══════════════════════════════════════════════ */
+.appWrapper {
+  background: var(--void);
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  font-family: var(--display);
+  color: var(--t1);
+}
+
+/* Deep star field */
+.appWrapper::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at  8% 15%, rgba(0,229,255,0.55) 0%, transparent 100%),
+    radial-gradient(1px 1px at 23%  4%, rgba(255,255,255,0.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 62%  8%, rgba(0,255,127,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 91%  6%, rgba(155,89,247,0.5) 0%, transparent 100%);
+  pointer-events: none; z-index: 0;
+}
+
+/* Aurora / nebula blobs */
+.appWrapper::after {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 55% 45% at -5% -10%, rgba(0,229,255,0.055) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 55% at 110% -5%,  rgba(155,89,247,0.065) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* Subtle grid */
+.gridOverlay {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.018) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none; z-index: 1;
+}
+
+/* Horizontal scanline */
+.scanline {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.04) 3px,
+    rgba(0,0,0,0.04) 4px
+  );
+  pointer-events: none; z-index: 1;
+}
+
+/* ══════════════════════════════════════════════
+   LAYOUT STRUCTURE (Header + Main + Footer)
+══════════════════════════════════════════════ */
+.content {
+  position: absolute; inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 36px 20px;
+  gap: 20px;
+  height: 100%;
+}
+
+.topRow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.mainArea {
+  flex: 1;
+  min-height: 0; /* Prevents overflow pushing the footer down */
+  /* Agar contents badh jaye toh scroll allow karne ke liye: overflow-y: auto; rakha ja sakta hai, par abhi fix rakhte hain */
+}
+
+.bottomBarContainer {
+  flex-shrink: 0;
+}
+
+/* Temp page placeholder text */
+.tempPage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-family: var(--mono);
+  color: var(--t3);
+  border: 1px dashed var(--b2);
+  border-radius: var(--r3);
+  background: var(--glass);
+}

@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&family=Bebas+Neue&display=swap');
+
+:root {
+  --void:     #03050e;
+  --deep:     #060912;
+  --surface:  #0a0f1e;
+  --card:     rgba(10,15,30,0.85);
+  --glass:    rgba(255,255,255,0.022);
+  --glass2:   rgba(255,255,255,0.04);
+
+  --cyan:     #00e5ff;
+  --green:    #00ff7f;
+  --purple:   #9b59f7;
+  --orange:   #ff6030;
+  --yellow:   #ffc832;
+  --red:      #ff3d5a;
+
+  --t1: #e4eaf8;
+  --t2: #7c89aa;
+  --t3: #3d4a68;
+  --t4: #1e2438;
+
+  --b0: rgba(255,255,255,0.03);
+  --b1: rgba(255,255,255,0.055);
+  --b2: rgba(255,255,255,0.09);
+
+  --mono:    'JetBrains Mono', monospace;
+  --display: 'Oxanium', sans-serif;
+  --big:     'Bebas Neue', sans-serif;
+
+  --r2: 10px;
+  --r3: 14px;
+}
+
+/* Light Theme Variables */
+body.light-theme {
+  --void:     #f4f6f8;
+  --deep:     #e2e8f0;
+  --surface:  #ffffff;
+  --card:     rgba(255, 255, 255, 0.85);
+  --glass:    rgba(0, 0, 0, 0.03);
+  --glass2:   rgba(0, 0, 0, 0.06);
+
+  --t1: #1e2438;
+  --t2: #3d4a68;
+  --t3: #7c89aa;
+  
+  --b0: rgba(0, 0, 0, 0.05);
+  --b1: rgba(0, 0, 0, 0.1);
+  --b2: rgba(0, 0, 0, 0.15);
+}
+
+
+body {
+  margin: 0;
+  background-color: var(--void);
+  color: var(--t1);
+  font-family: var(--display);
+}
+
+html, body {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Ye scrollbar aur footer ko hide karne me help karega */
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}

@@ -1,0 +1,53 @@
+.sh {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.shTitle {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--t3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Blinking Dot Animation ── */
+.shDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+/* ── Dot Colors & Glowing Shadows ── */
+.dotCyan   { background: var(--cyan);   box-shadow: 0 0 5px var(--cyan); }
+.dotGreen  { background: var(--green);  box-shadow: 0 0 5px var(--green); }
+.dotPurple { background: var(--purple); box-shadow: 0 0 5px var(--purple); }
+.dotOrange { background: var(--orange); box-shadow: 0 0 5px var(--orange); }
+.dotYellow { background: var(--yellow); box-shadow: 0 0 5px var(--yellow); }
+.dotTeal   { background: var(--teal);   box-shadow: 0 0 5px var(--teal); }
+
+/* ── Right Side Content ── */
+.shRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shSub {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--t3);
+}

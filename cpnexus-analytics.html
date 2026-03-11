@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>CPNexus — Analytics Tab</title>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:    #03050e;
+  --deep:    #060912;
+  --surface: #090d1c;
+  --card:    rgba(10,15,32,0.9);
+  --card2:   rgba(13,19,40,0.75);
+  --glass:   rgba(255,255,255,0.022);
+  --glass2:  rgba(255,255,255,0.042);
+
+  --cyan:    #00e5ff;
+  --green:   #00ff7f;
+  --purple:  #9b59f7;
+  --orange:  #ff6030;
+  --yellow:  #ffc832;
+  --red:     #ff3d5a;
+  --pink:    #ff2070;
+  --teal:    #00d4aa;
+
+  --easy:    #00ff7f;
+  --med:     #ffc832;
+  --hard:    #ff3d5a;
+
+  --t1: #e4eaf8;
+  --t2: #7c89aa;
+  --t3: #3d4a68;
+  --t4: #1e2438;
+
+  --b0: rgba(255,255,255,0.03);
+  --b1: rgba(255,255,255,0.055);
+  --b2: rgba(255,255,255,0.09);
+
+  --mono:    'JetBrains Mono', monospace;
+  --display: 'Oxanium', sans-serif;
+  --big:     'Bebas Neue', sans-serif;
+
+  --r1: 6px; --r2: 10px; --r3: 14px; --r4: 20px;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:14px; }
+body {
+  background: #0f1120;
+  font-family: var(--display);
+  color: var(--t1);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* ── LAPTOP FRAME ── */
+.laptop-wrap {
+  width: min(1380px, 100%);
+  display: flex; flex-direction: column; align-items: center;
+  filter: drop-shadow(0 40px 120px rgba(0,0,0,0.85));
+}
+.laptop-lid {
+  width: 100%;
+  background: #181a2a;
+  border-radius: 14px 14px 0 0;
+  border: 2px solid #2a2d40;
+  border-bottom: none;
+  overflow: hidden;
+  position: relative;
+}
+.laptop-lid::before {
+  content:''; position:absolute;
+  top:7px; left:50%; transform:translateX(-50%);
+  width:7px; height:7px;
+  background:#0d0e18; border-radius:50%;
+  border:1.5px solid #2a2d40; z-index:10;
+}
+
+/* ── BROWSER CHROME ── */
+.chrome-bar { background:#11131f; border-bottom:1px solid rgba(255,255,255,0.06); }
+.tab-strip  { display:flex; align-items:flex-end; padding:8px 12px 0; gap:1px; background:#0d0f1c; }
+.chrome-tab {
+  display:flex; align-items:center; gap:7px;
+  padding:7px 14px 7px 12px;
+  background:#11131f; border-radius:8px 8px 0 0;
+  font-family:var(--mono); font-size:11px; color:var(--t2);
+  cursor:pointer; min-width:160px;
+  border:1px solid rgba(255,255,255,0.06); border-bottom:none;
+}
+.chrome-tab.active { color:var(--t1); border-color:rgba(0,229,255,0.12); }
+.tab-favicon { font-size:12px; }
+.tab-title   { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tab-close   { opacity:0.3; font-size:10px; }
+.tab-new     { width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:16px; color:var(--t3); margin-bottom:2px; }
+.addr-row    { display:flex; align-items:center; gap:8px; padding:7px 14px 8px; }
+.nav-btn     { width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:13px; color:var(--t3); }
+.nav-btn.disabled { opacity:0.25; }
+.address-bar {
+  flex:1; display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px; padding:5px 14px;
+}
+.addr-lock { font-size:10px; color:var(--green); }
+.addr-text { font-family:var(--mono); font-size:12px; color:var(--t2); flex:1; }
+.chrome-actions { display:flex; gap:2px; }
+.ca-btn { width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:13px; color:var(--t3); }
+.ext-icon {
+  display:flex; align-items:center; gap:4px;
+  padding:3px 8px 3px 6px;
+  background:rgba(0,229,255,0.07); border:1px solid rgba(0,229,255,0.18); border-radius:14px;
+  font-size:13px; cursor:pointer;
+}
+.ext-icon span { font-family:var(--mono); font-size:10px; color:var(--cyan); font-weight:600; }
+
+/* ── NEWTAB SHELL ── */
+.newtab {
+  background: var(--void);
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16/10;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.newtab::before {
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at -5% -10%, rgba(0,229,255,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 110% -5%,  rgba(155,89,247,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 110%,  rgba(0,255,127,0.035) 0%, transparent 60%);
+  pointer-events:none; z-index:0;
+}
+.grid-overlay {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.015) 1px, transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none; z-index:1;
+}
+
+/* ── INNER LAYOUT ── */
+.nt-inner {
+  position:relative; z-index:2;
+  flex:1; display:flex; flex-direction:column;
+  padding:18px 24px 14px;
+  gap:14px;
+  overflow:hidden;
+}
+
+/* ── TOP BAR ── */
+.top-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  flex-shrink:0;
+  animation: rise 0.5s ease 0.05s both;
+}
+.page-heading { display:flex; align-items:baseline; gap:12px; }
+.page-heading h1 {
+  font-family:var(--big); font-size:28px; letter-spacing:0.06em;
+  background:linear-gradient(135deg, #fff 30%, rgba(0,229,255,0.75));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.page-heading span {
+  font-family:var(--mono); font-size:9px; color:var(--t3);
+  letter-spacing:0.18em; text-transform:uppercase;
+}
+
+/* Inner tab nav */
+.inner-tabs { display:flex; gap:3px; }
+.itab {
+  padding:5px 14px; border-radius:8px;
+  font-family:var(--mono); font-size:9px; font-weight:600;
+  text-transform:uppercase; letter-spacing:0.12em;
+  color:var(--t3); cursor:pointer; transition:all 0.2s;
+  border:1px solid transparent;
+}
+.itab:hover { color:var(--t2); background:var(--glass); }
+.itab.active { background:rgba(0,229,255,0.08); border-color:rgba(0,229,255,0.2); color:var(--cyan); }
+
+/* Time filter */
+.time-filter { display:flex; gap:2px; }
+.tf {
+  padding:4px 11px; border-radius:6px;
+  font-family:var(--mono); font-size:9px;
+  text-transform:uppercase; letter-spacing:0.1em;
+  color:var(--t3); cursor:pointer; transition:all 0.2s;
+  border:1px solid transparent;
+}
+.tf:hover { color:var(--t2); background:var(--glass2); }
+.tf.active { background:rgba(155,89,247,0.1); border-color:rgba(155,89,247,0.25); color:var(--purple); }
+
+/* ── SUMMARY ROW ── */
+.summary-row {
+  display:grid; grid-template-columns:repeat(6,1fr); gap:10px;
+  flex-shrink:0;
+  animation: rise 0.5s ease 0.1s both;
+}
+.stat-pill {
+  background:var(--card); border:1px solid var(--b1);
+  border-radius:var(--r2); padding:10px 12px;
+  position:relative; overflow:hidden;
+  transition:border-color 0.2s;
+}
+.stat-pill:hover { border-color:var(--b2); }
+.stat-pill::after {
+  content:''; position:absolute;
+  bottom:0; left:0; right:0; height:2px; border-radius:0 0 var(--r2) var(--r2);
+}
+.sp-1::after { background:var(--green);  box-shadow:0 0 8px rgba(0,255,127,0.4); }
+.sp-2::after { background:var(--yellow); box-shadow:0 0 8px rgba(255,200,50,0.4); }
+.sp-3::after { background:var(--red);    box-shadow:0 0 8px rgba(255,61,90,0.4); }
+.sp-4::after { background:var(--cyan);   box-shadow:0 0 8px rgba(0,229,255,0.4); }
+.sp-5::after { background:var(--purple); box-shadow:0 0 8px rgba(155,89,247,0.4); }
+.sp-6::after { background:var(--orange); box-shadow:0 0 8px rgba(255,96,48,0.4); }
+.sp-label { font-family:var(--mono); font-size:8px; text-transform:uppercase; letter-spacing:0.14em; color:var(--t3); margin-bottom:4px; }
+.sp-val   { font-family:var(--big); font-size:26px; letter-spacing:0.04em; line-height:1; }
+.sp-sub   { font-family:var(--mono); font-size:8px; margin-top:3px; }
+.up   { color:var(--green); }
+.down { color:var(--red); }
+.c-green  { color:var(--green); }
+.c-yellow { color:var(--yellow); }
+.c-red    { color:var(--red); }
+.c-cyan   { color:var(--cyan); }
+.c-purple { color:var(--purple); }
+.c-orange { color:var(--orange); }
+.c-teal   { color:var(--teal); }
+
+/* ── MAIN CHARTS GRID ── */
+.charts-grid {
+  flex:1; display:grid;
+  grid-template-columns: 1.15fr 1fr 1fr 0.9fr;
+  grid-template-rows: 1fr 1fr;
+  gap:12px;
+  min-height:0;
+  animation: rise 0.5s ease 0.15s both;
+}
+
+/* Base chart card */
+.cc {
+  background:var(--card); border:1px solid var(--b1);
+  border-radius:var(--r3); padding:14px 16px;
+  backdrop-filter:blur(16px);
+  display:flex; flex-direction:column; gap:10px;
+  position:relative; overflow:hidden;
+  transition:border-color 0.25s;
+}
+.cc:hover { border-color:var(--b2); }
+.cc::before {
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:1px;
+  border-radius:var(--r3) var(--r3) 0 0;
+  opacity:0; transition:opacity 0.3s;
+}
+.cc:hover::before { opacity:1; }
+.cc-cyan::before   { background:linear-gradient(90deg, transparent, var(--cyan),   transparent); }
+.cc-green::before  { background:linear-gradient(90deg, transparent, var(--green),  transparent); }
+.cc-purple::before { background:linear-gradient(90deg, transparent, var(--purple), transparent); }
+.cc-orange::before { background:linear-gradient(90deg, transparent, var(--orange), transparent); }
+.cc-yellow::before { background:linear-gradient(90deg, transparent, var(--yellow), transparent); }
+.cc-teal::before   { background:linear-gradient(90deg, transparent, var(--teal),   transparent); }
+
+.span-2r { grid-row:span 2; }
+
+/* Section header */
+.sh { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.sh-title {
+  font-family:var(--mono); font-size:9px; font-weight:600;
+  text-transform:uppercase; letter-spacing:0.18em; color:var(--t3);
+  display:flex; align-items:center; gap:6px;
+}
+.sh-dot { width:5px; height:5px; border-radius:50%; animation:blink 2s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
+.sh-dot-c  { background:var(--cyan);   box-shadow:0 0 5px var(--cyan); }
+.sh-dot-g  { background:var(--green);  box-shadow:0 0 5px var(--green); }
+.sh-dot-p  { background:var(--purple); box-shadow:0 0 5px var(--purple); }
+.sh-dot-o  { background:var(--orange); box-shadow:0 0 5px var(--orange); }
+.sh-dot-y  { background:var(--yellow); box-shadow:0 0 5px var(--yellow); }
+.sh-dot-t  { background:var(--teal);   box-shadow:0 0 5px var(--teal); }
+.sh-sub { font-family:var(--mono); font-size:8px; color:var(--t3); }
+
+/* ══════════════════
+   CHART 1: Rating History Line Chart (spans 2 rows, col 1)
+══════════════════ */
+.rating-chart { position:relative; flex:1; min-height:0; }
+.rc-svg { width:100%; height:100%; }
+
+/* Platform toggle */
+.platform-pills { display:flex; gap:5px; flex-wrap:wrap; }
+.pp {
+  display:flex; align-items:center; gap:5px;
+  padding:3px 9px; border-radius:10px;
+  font-family:var(--mono); font-size:8px; font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase;
+  cursor:pointer; transition:all 0.2s;
+  border:1px solid;
+}
+.pp.cf { background:rgba(0,229,255,0.08);  border-color:rgba(0,229,255,0.25);  color:var(--cyan); }
+.pp.lc { background:rgba(255,96,48,0.08);  border-color:rgba(255,96,48,0.25);  color:var(--orange); }
+.pp.cc { background:rgba(255,200,50,0.08); border-color:rgba(255,200,50,0.25); color:var(--yellow); }
+.pp.at { background:rgba(155,89,247,0.08); border-color:rgba(155,89,247,0.25); color:var(--purple); }
+.pp-dot { width:6px; height:6px; border-radius:50%; }
+.pp.cf .pp-dot { background:var(--cyan); }
+.pp.lc .pp-dot { background:var(--orange); }
+.pp.cc .pp-dot { background:var(--yellow); }
+.pp.at .pp-dot { background:var(--purple); }
+
+/* ══════════════════
+   CHART 2: Difficulty Donut
+══════════════════ */
+.donut-wrap { display:flex; align-items:center; gap:16px; flex:1; min-height:0; }
+.donut-svg-wrap { position:relative; flex-shrink:0; width:110px; height:110px; }
+.donut-svg { width:100%; height:100%; transform:rotate(-90deg); }
+.donut-center {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  text-align:center;
+}
+.dc-val { font-family:var(--big); font-size:26px; letter-spacing:0.04em; line-height:1; color:var(--t1); }
+.dc-lbl { font-family:var(--mono); font-size:8px; color:var(--t3); text-transform:uppercase; letter-spacing:0.1em; margin-top:2px; }
+.donut-legend { flex:1; display:flex; flex-direction:column; gap:8px; }
+.dl-row { display:flex; align-items:center; gap:8px; }
+.dl-color { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+.dl-info { flex:1; }
+.dl-label { font-family:var(--mono); font-size:9px; font-weight:600; }
+.dl-bar-wrap { height:4px; background:rgba(255,255,255,0.06); border-radius:2px; margin-top:3px; overflow:hidden; }
+.dl-bar { height:100%; border-radius:2px; }
+.dl-count { font-family:var(--mono); font-size:10px; font-weight:700; flex-shrink:0; }
+
+/* ══════════════════
+   CHART 3: Tag Analysis Horizontal Bars
+══════════════════ */
+.tag-list { flex:1; display:flex; flex-direction:column; gap:5px; min-height:0; overflow:hidden; }
+.tag-row  { display:flex; align-items:center; gap:8px; }
+.tag-name { font-family:var(--mono); font-size:9px; color:var(--t2); width:72px; flex-shrink:0; text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tag-bar-wrap { flex:1; height:14px; background:rgba(255,255,255,0.04); border-radius:3px; overflow:hidden; position:relative; }
+.tag-bar {
+  height:100%; border-radius:3px;
+  display:flex; align-items:center; justify-content:flex-end;
+  padding-right:6px;
+  position:relative;
+}
+.tag-bar::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg, transparent 60%, rgba(255,255,255,0.08));
+}
+.tag-count { font-family:var(--mono); font-size:8px; font-weight:700; color:rgba(255,255,255,0.9); position:relative; z-index:1; }
+.tag-pct { font-family:var(--mono); font-size:8px; color:var(--t3); width:28px; flex-shrink:0; }
+
+/* ══════════════════
+   CHART 4: Time-of-Day Heatmap
+══════════════════ */
+.tod-wrap { flex:1; display:flex; flex-direction:column; gap:6px; min-height:0; }
+.tod-grid {
+  flex:1; display:grid;
+  grid-template-columns: 28px repeat(24, 1fr);
+  grid-template-rows: 16px repeat(7, 1fr);
+  gap:2px;
+}
+.tod-hour-label {
+  font-family:var(--mono); font-size:6.5px; color:var(--t3);
+  display:flex; align-items:center; justify-content:center;
+  letter-spacing:0.05em;
+}
+.tod-day-label {
+  font-family:var(--mono); font-size:7px; color:var(--t3);
+  display:flex; align-items:center; justify-content:flex-end;
+  padding-right:4px; text-transform:uppercase; letter-spacing:0.08em;
+}
+.tod-cell {
+  border-radius:2px;
+  background:rgba(255,255,255,0.04);
+  cursor:pointer; transition:transform 0.1s;
+  position:relative;
+}
+.tod-cell:hover { transform:scale(1.3); z-index:10; }
+/* intensity levels */
+.i0  { background:rgba(255,255,255,0.03); }
+.i1  { background:rgba(155,89,247,0.2); }
+.i2  { background:rgba(155,89,247,0.38); }
+.i3  { background:rgba(0,229,255,0.4); }
+.i4  { background:rgba(0,229,255,0.65); box-shadow:0 0 3px rgba(0,229,255,0.3); }
+.i5  { background:rgba(0,255,127,0.75); box-shadow:0 0 4px rgba(0,255,127,0.4); }
+
+/* Peak badge */
+.tod-insights { display:flex; gap:8px; flex-wrap:wrap; }
+.tod-badge {
+  display:flex; align-items:center; gap:5px;
+  padding:3px 9px; border-radius:6px;
+  font-family:var(--mono); font-size:8px;
+  background:var(--glass); border:1px solid var(--b1);
+}
+.tod-badge-dot { width:6px; height:6px; border-radius:50%; }
+
+/* ══════════════════
+   CHART 5: Monthly Problems Bar
+══════════════════ */
+.monthly-chart { flex:1; display:flex; flex-direction:column; gap:8px; min-height:0; }
+.month-bars {
+  flex:1; display:flex; align-items:flex-end; gap:5px;
+  padding-bottom:2px;
+}
+.mb-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; }
+.mb-stack { width:100%; display:flex; flex-direction:column; gap:1px; align-items:stretch; }
+.mb-hard { border-radius:3px 3px 0 0; transition:opacity 0.2s; }
+.mb-med  { transition:opacity 0.2s; }
+.mb-easy { border-radius:0 0 3px 3px; transition:opacity 0.2s; }
+.mb-col:hover .mb-hard,
+.mb-col:hover .mb-med,
+.mb-col:hover .mb-easy { opacity:1 !important; }
+.mb-label { font-family:var(--mono); font-size:7px; color:var(--t3); text-transform:uppercase; letter-spacing:0.06em; }
+.mb-total { font-family:var(--mono); font-size:8px; color:var(--t2); font-weight:600; margin-bottom:2px; }
+.chart-legend { display:flex; gap:12px; flex-shrink:0; }
+.cl-item { display:flex; align-items:center; gap:5px; font-family:var(--mono); font-size:8px; color:var(--t2); }
+.cl-dot  { width:8px; height:8px; border-radius:2px; }
+
+/* ══════════════════
+   CHART 6: Contest Performance mini
+══════════════════ */
+.contest-perf { flex:1; display:flex; flex-direction:column; gap:8px; min-height:0; }
+.cp-list { flex:1; display:flex; flex-direction:column; gap:5px; overflow:hidden; }
+.cp-row {
+  display:flex; align-items:center; gap:8px;
+  padding:7px 10px;
+  background:var(--glass); border:1px solid var(--b0); border-radius:var(--r1);
+  cursor:pointer; transition:all 0.15s;
+}
+.cp-row:hover { background:var(--glass2); }
+.cp-platform { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.cp-name { flex:1; font-size:10px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cp-rank { font-family:var(--mono); font-size:9px; color:var(--t2); flex-shrink:0; }
+.cp-delta { font-family:var(--mono); font-size:10px; font-weight:700; flex-shrink:0; min-width:40px; text-align:right; }
+.cp-bar-col { width:50px; flex-shrink:0; }
+.cp-mini-bar { height:3px; border-radius:2px; }
+
+/* Win-rate ring mini */
+.wr-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.wr-item {
+  background:var(--glass); border:1px solid var(--b0); border-radius:var(--r1);
+  padding:8px; text-align:center;
+}
+.wr-platform { font-family:var(--mono); font-size:7px; text-transform:uppercase; letter-spacing:0.1em; color:var(--t3); margin-bottom:4px; }
+.wr-pct { font-family:var(--big); font-size:24px; letter-spacing:0.04em; line-height:1; }
+.wr-sub { font-family:var(--mono); font-size:7px; color:var(--t3); margin-top:2px; }
+
+/* ── LAPTOP BASE ── */
+.laptop-hinge { width:98%; height:8px; background:linear-gradient(180deg,#1e2035,#131525); border-radius:0 0 4px 4px; border:1px solid #2a2d40; border-top:none; }
+.laptop-base  { width:92%; height:14px; background:linear-gradient(180deg,#151728,#0e1020); border-radius:0 0 12px 12px; border:1px solid #1e2135; border-top:none; display:flex; align-items:center; justify-content:center; }
+.trackpad-hint { width:80px; height:5px; background:rgba(255,255,255,0.04); border-radius:3px; border:1px solid rgba(255,255,255,0.06); }
+
+/* ── ANIMATIONS ── */
+@keyframes rise { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+@keyframes fill-bar { from{width:0;} to{width:var(--w);} }
+@keyframes count-up { from{opacity:0;} to{opacity:1;} }
+
+.cc:nth-child(1) { animation:rise 0.45s ease 0.1s  both; }
+.cc:nth-child(2) { animation:rise 0.45s ease 0.15s both; }
+.cc:nth-child(3) { animation:rise 0.45s ease 0.2s  both; }
+.cc:nth-child(4) { animation:rise 0.45s ease 0.25s both; }
+.cc:nth-child(5) { animation:rise 0.45s ease 0.2s  both; }
+.cc:nth-child(6) { animation:rise 0.45s ease 0.25s both; }
+.cc:nth-child(7) { animation:rise 0.45s ease 0.3s  both; }
+
+/* SVG line chart */
+.chart-line { fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.chart-area { opacity:0.12; }
+.chart-dot  { r:3; cursor:pointer; transition:r 0.15s; }
+.chart-dot:hover { r:5; }
+.grid-line  { stroke:rgba(255,255,255,0.06); stroke-width:1; }
+.axis-label { font-family:'JetBrains Mono',monospace; font-size:8px; fill:rgba(61,74,104,1); }
+</style>
+</head>
+<body>
+
+<div class="laptop-wrap">
+<div class="laptop-lid">
+
+  <!-- Browser Chrome -->
+  <div class="chrome-bar">
+    <div class="tab-strip">
+      <div class="chrome-tab active"><span class="tab-favicon">📊</span><span class="tab-title">CPNexus Analytics</span><span class="tab-close">✕</span></div>
+      <div class="chrome-tab"><span class="tab-favicon">🔵</span><span class="tab-title">Codeforces</span><span class="tab-close">✕</span></div>
+      <div class="chrome-tab"><span class="tab-favicon">🟡</span><span class="tab-title">LeetCode</span><span class="tab-close">✕</span></div>
+      <div class="tab-new">＋</div>
+    </div>
+    <div class="addr-row">
+      <div class="nav-btn disabled">←</div>
+      <div class="nav-btn disabled">→</div>
+      <div class="nav-btn">↻</div>
+      <div class="address-bar">
+        <span class="addr-lock">🔒</span>
+        <span class="addr-text">chrome://newtab — CPNexus · Analytics</span>
+      </div>
+      <div class="chrome-actions">
+        <div class="ca-btn">☆</div>
+        <div class="ext-icon">⚡<span>CPNexus</span></div>
+        <div class="ca-btn">⋮</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Tab Page -->
+  <div class="newtab">
+    <div class="grid-overlay"></div>
+
+    <div class="nt-inner">
+
+      <!-- TOP BAR -->
+      <div class="top-bar">
+        <div class="page-heading">
+          <h1>ANALYTICS</h1>
+          <span>// your competitive programming data</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <!-- Inner nav tabs -->
+          <div class="inner-tabs">
+            <div class="itab">Dashboard</div>
+            <div class="itab active">Analytics</div>
+            <div class="itab">Contests</div>
+            <div class="itab">Ratings</div>
+            <div class="itab">Settings</div>
+          </div>
+          <!-- Time range filter -->
+          <div class="time-filter">
+            <div class="tf">7D</div>
+            <div class="tf active">30D</div>
+            <div class="tf">3M</div>
+            <div class="tf">All</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUMMARY PILLS -->
+      <div class="summary-row">
+        <div class="stat-pill sp-1">
+          <div class="sp-label">Total Solved</div>
+          <div class="sp-val c-green">218</div>
+          <div class="sp-sub up">↑ +34 vs last month</div>
+        </div>
+        <div class="stat-pill sp-2">
+          <div class="sp-label">Easy</div>
+          <div class="sp-val c-green">89</div>
+          <div class="sp-sub" style="color:var(--t3)">40.8% of total</div>
+        </div>
+        <div class="stat-pill sp-3" style="--after-color:var(--yellow)">
+          <div class="sp-label">Medium</div>
+          <div class="sp-val c-yellow">104</div>
+          <div class="sp-sub" style="color:var(--t3)">47.7% of total</div>
+        </div>
+        <div class="stat-pill sp-4" style="">
+          <div class="sp-label">Hard</div>
+          <div class="sp-val c-red">25</div>
+          <div class="sp-sub up">↑ +8 this month</div>
+        </div>
+        <div class="stat-pill sp-5">
+          <div class="sp-label">Contests</div>
+          <div class="sp-val c-purple">14</div>
+          <div class="sp-sub up">↑ +3 vs last</div>
+        </div>
+        <div class="stat-pill sp-6">
+          <div class="sp-label">Avg Daily</div>
+          <div class="sp-val c-orange">7.2</div>
+          <div class="sp-sub" style="color:var(--t3)">problems/day</div>
+        </div>
+      </div>
+
+      <!-- CHARTS GRID -->
+      <div class="charts-grid">
+
+        <!-- CHART 1: Rating History — col 1, span 2 rows -->
+        <div class="cc cc-cyan span-2r">
+          <div class="sh">
+            <div class="sh-title"><div class="sh-dot sh-dot-c"></div>Rating History</div>
+            <div class="platform-pills">
+              <div class="pp cf"><div class="pp-dot"></div>CF</div>
+              <div class="pp lc"><div class="pp-dot"></div>LC</div>
+              <div class="pp cc"><div class="pp-dot"></div>CC</div>
+              <div class="pp at"><div class="pp-dot"></div>AT</div>
+            </div>
+          </div>
+          <div class="rating-chart">
+            <svg class="rc-svg" viewBox="0 0 380 240" preserveAspectRatio="none">
+              <!-- Grid lines -->
+              <line class="grid-line" x1="40" y1="20"  x2="375" y2="20"/>
+              <line class="grid-line" x1="40" y1="68"  x2="375" y2="68"/>
+              <line class="grid-line" x1="40" y1="116" x2="375" y2="116"/>
+              <line class="grid-line" x1="40" y1="164" x2="375" y2="164"/>
+              <line class="grid-line" x1="40" y1="212" x2="375" y2="212"/>
+              <!-- Y axis labels -->
+              <text class="axis-label" x="35" y="24"  text-anchor="end">2100</text>
+              <text class="axis-label" x="35" y="72"  text-anchor="end">1900</text>
+              <text class="axis-label" x="35" y="120" text-anchor="end">1700</text>
+              <text class="axis-label" x="35" y="168" text-anchor="end">1500</text>
+              <text class="axis-label" x="35" y="216" text-anchor="end">1300</text>
+              <!-- X axis labels -->
+              <text class="axis-label" x="55"  y="232" text-anchor="middle">Aug</text>
+              <text class="axis-label" x="100" y="232" text-anchor="middle">Sep</text>
+              <text class="axis-label" x="145" y="232" text-anchor="middle">Oct</text>
+              <text class="axis-label" x="190" y="232" text-anchor="middle">Nov</text>
+              <text class="axis-label" x="235" y="232" text-anchor="middle">Dec</text>
+              <text class="axis-label" x="280" y="232" text-anchor="middle">Jan</text>
+              <text class="axis-label" x="325" y="232" text-anchor="middle">Feb</text>
+              <text class="axis-label" x="365" y="232" text-anchor="middle">Mar</text>
+
+              <!-- CF line (cyan) — Rating 1540→1847 -->
+              <defs>
+                <linearGradient id="grad-cf" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="grad-lc" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ff6030" stop-opacity="0.25"/>
+                  <stop offset="100%" stop-color="#ff6030" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="grad-cc" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ffc832" stop-opacity="0.2"/>
+                  <stop offset="100%" stop-color="#ffc832" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="grad-at" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#9b59f7" stop-opacity="0.2"/>
+                  <stop offset="100%" stop-color="#9b59f7" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+
+              <!-- CF area -->
+              <polygon class="chart-area" fill="url(#grad-cf)"
+                points="55,168 100,156 145,162 190,136 235,148 280,112 325,96 365,76 365,220 55,220"/>
+              <!-- CF line -->
+              <polyline class="chart-line" stroke="#00e5ff"
+                points="55,168 100,156 145,162 190,136 235,148 280,112 325,96 365,76"/>
+              <!-- CF dots -->
+              <circle class="chart-dot" cx="55"  cy="168" fill="#00e5ff" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="100" cy="156" fill="#00e5ff" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="145" cy="162" fill="#00e5ff" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="190" cy="136" fill="#00e5ff" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="235" cy="148" fill="#00e5ff" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="280" cy="112" fill="#00e5ff" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="325" cy="96"  fill="#00e5ff" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="365" cy="76"  fill="#00e5ff" stroke="#03050e" stroke-width="2" r="4"/>
+
+              <!-- LC area -->
+              <polygon class="chart-area" fill="url(#grad-lc)"
+                points="55,174 100,160 145,142 190,130 235,138 280,120 325,128 365,108 365,220 55,220"/>
+              <!-- LC line -->
+              <polyline class="chart-line" stroke="#ff6030" stroke-dasharray="0"
+                points="55,174 100,160 145,142 190,130 235,138 280,120 325,128 365,108"/>
+              <!-- LC dots -->
+              <circle class="chart-dot" cx="55"  cy="174" fill="#ff6030" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="100" cy="160" fill="#ff6030" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="145" cy="142" fill="#ff6030" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="190" cy="130" fill="#ff6030" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="235" cy="138" fill="#ff6030" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="280" cy="120" fill="#ff6030" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="325" cy="128" fill="#ff6030" stroke="#03050e" stroke-width="2"/>
+              <circle class="chart-dot" cx="365" cy="108" fill="#ff6030" stroke="#03050e" stroke-width="2" r="4"/>
+
+              <!-- CC line (yellow, thinner) -->
+              <polyline class="chart-line" stroke="#ffc832" stroke-width="1.5" stroke-opacity="0.7"
+                points="55,190 100,185 145,178 190,168 235,172 280,158 325,152 365,144"/>
+              <!-- AT line (purple, thinner) -->
+              <polyline class="chart-line" stroke="#9b59f7" stroke-width="1.5" stroke-opacity="0.7"
+                points="55,200 100,196 145,188 190,180 235,178 280,174 325,168 365,162"/>
+
+              <!-- Tooltip area label -->
+              <rect x="330" y="60" width="40" height="20" rx="4" fill="rgba(0,229,255,0.1)" stroke="rgba(0,229,255,0.2)" stroke-width="1"/>
+              <text x="350" y="74" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#00e5ff">1847</text>
+            </svg>
+          </div>
+
+          <!-- Latest ratings row -->
+          <div style="display:flex;gap:10px;flex-shrink:0;">
+            <div style="flex:1;background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.15);border-radius:6px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:var(--mono);font-size:8px;color:var(--t3);">Codeforces</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--cyan);letter-spacing:0.04em;">1847</span>
+              <span style="font-family:var(--mono);font-size:9px;" class="up">▲+63</span>
+            </div>
+            <div style="flex:1;background:rgba(255,96,48,0.06);border:1px solid rgba(255,96,48,0.15);border-radius:6px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:var(--mono);font-size:8px;color:var(--t3);">LeetCode</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--orange);letter-spacing:0.04em;">1964</span>
+              <span style="font-family:var(--mono);font-size:9px;" class="down">▼−12</span>
+            </div>
+            <div style="flex:1;background:rgba(255,200,50,0.06);border:1px solid rgba(255,200,50,0.15);border-radius:6px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:var(--mono);font-size:8px;color:var(--t3);">CodeChef</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--yellow);letter-spacing:0.04em;">4★</span>
+              <span style="font-family:var(--mono);font-size:9px;" class="up">▲+82</span>
+            </div>
+            <div style="flex:1;background:rgba(155,89,247,0.06);border:1px solid rgba(155,89,247,0.15);border-radius:6px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:var(--mono);font-size:8px;color:var(--t3);">AtCoder</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--purple);letter-spacing:0.04em;">1523</span>
+              <span style="font-family:var(--mono);font-size:9px;" class="up">▲+14</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHART 2: Difficulty Donut — top col 2 -->
+        <div class="cc cc-green">
+          <div class="sh">
+            <div class="sh-title"><div class="sh-dot sh-dot-g"></div>Difficulty Breakdown</div>
+            <div class="sh-sub">218 total</div>
+          </div>
+          <div class="donut-wrap">
+            <div class="donut-svg-wrap">
+              <svg class="donut-svg" viewBox="0 0 110 110">
+                <!-- Hard: 25 = 11.5% = 41deg -->
+                <circle cx="55" cy="55" r="40" fill="none" stroke="#ff3d5a" stroke-width="14"
+                  stroke-dasharray="41.5 210.5" stroke-dashoffset="0" opacity="0.9"/>
+                <!-- Medium: 104 = 47.7% = 171.5deg -->
+                <circle cx="55" cy="55" r="40" fill="none" stroke="#ffc832" stroke-width="14"
+                  stroke-dasharray="172.5 79.5" stroke-dashoffset="-41.5" opacity="0.85"/>
+                <!-- Easy: 89 = 40.8% = 147deg -->
+                <circle cx="55" cy="55" r="40" fill="none" stroke="#00ff7f" stroke-width="14"
+                  stroke-dasharray="147 105" stroke-dashoffset="-214" opacity="0.85"/>
+                <!-- Inner ring -->
+                <circle cx="55" cy="55" r="33" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              </svg>
+              <div class="donut-center">
+                <div class="dc-val">218</div>
+                <div class="dc-lbl">solved</div>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="dl-row">
+                <div class="dl-color" style="background:var(--easy)"></div>
+                <div class="dl-info">
+                  <div class="dl-label c-green">Easy</div>
+                  <div class="dl-bar-wrap"><div class="dl-bar" style="width:40.8%;background:var(--easy);"></div></div>
+                </div>
+                <div class="dl-count c-green">89</div>
+              </div>
+              <div class="dl-row">
+                <div class="dl-color" style="background:var(--med)"></div>
+                <div class="dl-info">
+                  <div class="dl-label c-yellow">Medium</div>
+                  <div class="dl-bar-wrap"><div class="dl-bar" style="width:47.7%;background:var(--med);"></div></div>
+                </div>
+                <div class="dl-count c-yellow">104</div>
+              </div>
+              <div class="dl-row">
+                <div class="dl-color" style="background:var(--hard)"></div>
+                <div class="dl-info">
+                  <div class="dl-label c-red">Hard</div>
+                  <div class="dl-bar-wrap"><div class="dl-bar" style="width:11.5%;background:var(--hard);"></div></div>
+                </div>
+                <div class="dl-count c-red">25</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHART 3: Tag Analysis — top col 3 -->
+        <div class="cc cc-purple">
+          <div class="sh">
+            <div class="sh-title"><div class="sh-dot sh-dot-p"></div>Tag Analysis</div>
+            <div class="sh-sub">top topics</div>
+          </div>
+          <div class="tag-list">
+            <div class="tag-row">
+              <div class="tag-name">Dynamic Prog</div>
+              <div class="tag-bar-wrap"><div class="tag-bar" style="width:82%;background:linear-gradient(90deg,rgba(155,89,247,0.6),rgba(155,89,247,0.9));"><span class="tag-count">52</span></div></div>
+              <div class="tag-pct c-purple">82%</div>
+            </div>
+            <div class="tag-row">
+              <div class="tag-name">Graphs</div>
+              <div class="tag-bar-wrap"><div class="tag-bar" style="width:68%;background:linear-gradient(90deg,rgba(0,229,255,0.5),rgba(0,229,255,0.85));"><span class="tag-count">43</span></div></div>
+              <div class="tag-pct c-cyan">68%</div>
+            </div>
+            <div class="tag-row">
+              <div class="tag-name">Trees</div>
+              <div class="tag-bar-wrap"><div class="tag-bar" style="width:61%;background:linear-gradient(90deg,rgba(0,255,127,0.45),rgba(0,255,127,0.8));"><span class="tag-count">38</span></div></div>
+              <div class="tag-pct c-green">61%</div>
+            </div>
+            <div class="tag-row">
+              <div class="tag-name">Binary Search</div>
+              <div class="tag-bar-wrap"><div class="tag-bar" style="width:55%;background:linear-gradient(90deg,rgba(0,212,170,0.45),rgba(0,212,170,0.8));"><span class="tag-count">35</span></div></div>
+              <div class="tag-pct c-teal">55%</div>
+            </div>
+            <div class="tag-row">
+              <div class="tag-name">Two Pointers</div>
+              <div class="tag-bar-wrap"><div class="tag-bar" style="width:48%;background:linear-gradient(90deg,rgba(255,200,50,0.45),rgba(255,200,50,0.8));"><span class="tag-count">30</span></div></div>
+              <div class="tag-pct c-yellow">48%</div>
+            </div>
+            <div class="tag-row">
+              <div class="tag-name">Greedy</div>
+              <div class="tag-bar-wrap"><div class="tag-bar" style="width:40%;background:linear-gradient(90deg,rgba(255,96,48,0.45),rgba(255,96,48,0.8));"><span class="tag-count">25</span></div></div>
+              <div class="tag-pct c-orange">40%</div>
+            </div>
+            <div class="tag-row">
+              <div class="tag-name">Bit Manip</div>
+              <div class="tag-bar-wrap"><div class="tag-bar" style="width:28%;background:linear-gradient(90deg,rgba(255,61,90,0.4),rgba(255,61,90,0.75));"><span class="tag-count">18</span></div></div>
+              <div class="tag-pct c-red">28%</div>
+            </div>
+            <div class="tag-row">
+              <div class="tag-name">Segment Tree</div>
+              <div class="tag-bar-wrap"><div class="tag-bar" style="width:18%;background:linear-gradient(90deg,rgba(155,89,247,0.3),rgba(155,89,247,0.65));"><span class="tag-count">11</span></div></div>
+              <div class="tag-pct c-purple">18%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHART 4: Win Rate mini — top col 4 -->
+        <div class="cc cc-orange">
+          <div class="sh">
+            <div class="sh-title"><div class="sh-dot sh-dot-o"></div>Contest Win Rate</div>
+          </div>
+          <div class="wr-grid">
+            <div class="wr-item">
+              <div class="wr-platform">CF</div>
+              <div class="wr-pct c-cyan">71%</div>
+              <div class="wr-sub">Rank improved</div>
+            </div>
+            <div class="wr-item">
+              <div class="wr-platform">LC</div>
+              <div class="wr-pct c-orange">58%</div>
+              <div class="wr-sub">Top 50% finish</div>
+            </div>
+            <div class="wr-item">
+              <div class="wr-platform">CC</div>
+              <div class="wr-pct c-yellow">80%</div>
+              <div class="wr-sub">Rank improved</div>
+            </div>
+            <div class="wr-item">
+              <div class="wr-platform">AT</div>
+              <div class="wr-pct c-purple">50%</div>
+              <div class="wr-sub">50/50 ratio</div>
+            </div>
+          </div>
+          <!-- Best contest -->
+          <div style="background:linear-gradient(135deg,rgba(0,229,255,0.06),rgba(155,89,247,0.04));border:1px solid rgba(0,229,255,0.12);border-radius:var(--r1);padding:7px 10px;">
+            <div style="font-family:var(--mono);font-size:8px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.12em;">🏆 Best Performance</div>
+            <div style="font-size:10px;font-weight:700;color:var(--t1);">CF Round 962 — Rank 234</div>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:2px;">Global Top 1.2% · +142 rating</div>
+          </div>
+        </div>
+
+        <!-- CHART 5: Monthly Problem Count — bottom col 2 -->
+        <div class="cc cc-yellow">
+          <div class="sh">
+            <div class="sh-title"><div class="sh-dot sh-dot-y"></div>Monthly Solved</div>
+            <div class="chart-legend">
+              <div class="cl-item"><div class="cl-dot" style="background:var(--easy)"></div>Easy</div>
+              <div class="cl-item"><div class="cl-dot" style="background:var(--med)"></div>Med</div>
+              <div class="cl-item"><div class="cl-dot" style="background:var(--hard)"></div>Hard</div>
+            </div>
+          </div>
+          <div class="monthly-chart">
+            <div class="month-bars">
+              <!-- Aug -->
+              <div class="mb-col">
+                <div class="mb-total" style="font-size:7px;">98</div>
+                <div class="mb-stack" style="height:60px;">
+                  <div class="mb-hard" style="height:10%;background:var(--hard);opacity:0.8;"></div>
+                  <div class="mb-med"  style="height:48%;background:var(--med);opacity:0.8;"></div>
+                  <div class="mb-easy" style="height:42%;background:var(--easy);opacity:0.8;"></div>
+                </div>
+                <div class="mb-label">Aug</div>
+              </div>
+              <!-- Sep -->
+              <div class="mb-col">
+                <div class="mb-total" style="font-size:7px;">112</div>
+                <div class="mb-stack" style="height:69px;">
+                  <div class="mb-hard" style="height:12%;background:var(--hard);opacity:0.8;"></div>
+                  <div class="mb-med"  style="height:50%;background:var(--med);opacity:0.8;"></div>
+                  <div class="mb-easy" style="height:38%;background:var(--easy);opacity:0.8;"></div>
+                </div>
+                <div class="mb-label">Sep</div>
+              </div>
+              <!-- Oct -->
+              <div class="mb-col">
+                <div class="mb-total" style="font-size:7px;">87</div>
+                <div class="mb-stack" style="height:53px;">
+                  <div class="mb-hard" style="height:8%;background:var(--hard);opacity:0.8;"></div>
+                  <div class="mb-med"  style="height:44%;background:var(--med);opacity:0.8;"></div>
+                  <div class="mb-easy" style="height:48%;background:var(--easy);opacity:0.8;"></div>
+                </div>
+                <div class="mb-label">Oct</div>
+              </div>
+              <!-- Nov -->
+              <div class="mb-col">
+                <div class="mb-total" style="font-size:7px;">134</div>
+                <div class="mb-stack" style="height:82px;">
+                  <div class="mb-hard" style="height:14%;background:var(--hard);opacity:0.8;"></div>
+                  <div class="mb-med"  style="height:49%;background:var(--med);opacity:0.8;"></div>
+                  <div class="mb-easy" style="height:37%;background:var(--easy);opacity:0.8;"></div>
+                </div>
+                <div class="mb-label">Nov</div>
+              </div>
+              <!-- Dec -->
+              <div class="mb-col">
+                <div class="mb-total" style="font-size:7px;">156</div>
+                <div class="mb-stack" style="height:95px;">
+                  <div class="mb-hard" style="height:16%;background:var(--hard);opacity:0.8;"></div>
+                  <div class="mb-med"  style="height:48%;background:var(--med);opacity:0.8;"></div>
+                  <div class="mb-easy" style="height:36%;background:var(--easy);opacity:0.8;"></div>
+                </div>
+                <div class="mb-label">Dec</div>
+              </div>
+              <!-- Jan -->
+              <div class="mb-col">
+                <div class="mb-total" style="font-size:7px;">178</div>
+                <div class="mb-stack" style="height:109px;">
+                  <div class="mb-hard" style="height:18%;background:var(--hard);opacity:0.8;"></div>
+                  <div class="mb-med"  style="height:47%;background:var(--med);opacity:0.8;"></div>
+                  <div class="mb-easy" style="height:35%;background:var(--easy);opacity:0.8;"></div>
+                </div>
+                <div class="mb-label">Jan</div>
+              </div>
+              <!-- Feb -->
+              <div class="mb-col">
+                <div class="mb-total" style="font-size:7px;">184</div>
+                <div class="mb-stack" style="height:112px;">
+                  <div class="mb-hard" style="height:10%;background:var(--hard);opacity:0.8;"></div>
+                  <div class="mb-med"  style="height:50%;background:var(--med);opacity:0.8;"></div>
+                  <div class="mb-easy" style="height:40%;background:var(--easy);opacity:0.8;"></div>
+                </div>
+                <div class="mb-label">Feb</div>
+              </div>
+              <!-- Mar (current — highlighted) -->
+              <div class="mb-col">
+                <div class="mb-total" style="font-size:7px;color:var(--green);">218🔥</div>
+                <div class="mb-stack" style="height:133px;">
+                  <div class="mb-hard" style="height:11%;background:var(--hard);opacity:1;box-shadow:0 0 4px rgba(255,61,90,0.4);"></div>
+                  <div class="mb-med"  style="height:48%;background:var(--med);opacity:1;box-shadow:0 0 4px rgba(255,200,50,0.4);"></div>
+                  <div class="mb-easy" style="height:41%;background:var(--easy);opacity:1;box-shadow:0 0 4px rgba(0,255,127,0.4);"></div>
+                </div>
+                <div class="mb-label" style="color:var(--green);">Mar</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHART 6: Time-of-Day Heatmap — bottom col 3+4 -->
+        <div class="cc cc-teal" style="grid-column:span 2;">
+          <div class="sh">
+            <div class="sh-title"><div class="sh-dot sh-dot-t"></div>Time-of-Day Activity Heatmap</div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-family:var(--mono);font-size:8px;color:var(--t3);">less</span>
+              <div style="display:flex;gap:2px;align-items:center;">
+                <div style="width:10px;height:10px;border-radius:2px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);"></div>
+                <div style="width:10px;height:10px;border-radius:2px;background:rgba(155,89,247,0.2);"></div>
+                <div style="width:10px;height:10px;border-radius:2px;background:rgba(0,229,255,0.4);"></div>
+                <div style="width:10px;height:10px;border-radius:2px;background:rgba(0,229,255,0.65);box-shadow:0 0 3px rgba(0,229,255,0.3);"></div>
+                <div style="width:10px;height:10px;border-radius:2px;background:rgba(0,255,127,0.75);box-shadow:0 0 4px rgba(0,255,127,0.4);"></div>
+              </div>
+              <span style="font-family:var(--mono);font-size:8px;color:var(--t3);">more</span>
+            </div>
+          </div>
+          <div class="tod-wrap">
+            <div class="tod-grid">
+              <!-- Hour labels row -->
+              <div></div>
+              <div class="tod-hour-label">12a</div><div class="tod-hour-label"></div>
+              <div class="tod-hour-label">2a</div><div class="tod-hour-label"></div>
+              <div class="tod-hour-label">4a</div><div class="tod-hour-label"></div>
+              <div class="tod-hour-label">6a</div><div class="tod-hour-label"></div>
+              <div class="tod-hour-label">8a</div><div class="tod-hour-label"></div>
+              <div class="tod-hour-label">10a</div><div class="tod-hour-label"></div>
+              <div class="tod-hour-label">12p</div><div class="tod-hour-label"></div>
+              <div class="tod-hour-label">2p</div><div class="tod-hour-label"></div>
+              <div class="tod-hour-label">4p</div><div class="tod-hour-label"></div>
+              <div class="tod-hour-label">6p</div><div class="tod-hour-label"></div>
+              <div class="tod-hour-label">8p</div><div class="tod-hour-label"></div>
+              <div class="tod-hour-label">10p</div><div class="tod-hour-label"></div>
+
+              <!-- MON -->
+              <div class="tod-day-label">Mon</div>
+              <div class="tod-cell i1"></div><div class="tod-cell i0"></div>
+              <div class="tod-cell i0"></div><div class="tod-cell i0"></div>
+              <div class="tod-cell i0"></div><div class="tod-cell i1"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i1"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i1"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i1"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i5"></div><div class="tod-cell i5"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i3"></div>
+
+              <!-- TUE -->
+              <div class="tod-day-label">Tue</div>
+              <div class="tod-cell i2"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i1"></div><div class="tod-cell i0"></div>
+              <div class="tod-cell i0"></div><div class="tod-cell i0"></div>
+              <div class="tod-cell i1"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i1"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i5"></div><div class="tod-cell i5"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i5"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i4"></div>
+
+              <!-- WED -->
+              <div class="tod-day-label">Wed</div>
+              <div class="tod-cell i3"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i1"></div>
+              <div class="tod-cell i0"></div><div class="tod-cell i0"></div>
+              <div class="tod-cell i1"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i1"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i1"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i5"></div>
+              <div class="tod-cell i5"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i2"></div>
+
+              <!-- THU -->
+              <div class="tod-day-label">Thu</div>
+              <div class="tod-cell i1"></div><div class="tod-cell i1"></div>
+              <div class="tod-cell i0"></div><div class="tod-cell i0"></div>
+              <div class="tod-cell i0"></div><div class="tod-cell i1"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i1"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i5"></div><div class="tod-cell i5"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i3"></div>
+
+              <!-- FRI -->
+              <div class="tod-day-label">Fri</div>
+              <div class="tod-cell i2"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i1"></div>
+              <div class="tod-cell i0"></div><div class="tod-cell i0"></div>
+              <div class="tod-cell i1"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i1"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i5"></div>
+              <div class="tod-cell i5"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i4"></div>
+
+              <!-- SAT -->
+              <div class="tod-day-label">Sat</div>
+              <div class="tod-cell i3"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i1"></div><div class="tod-cell i0"></div>
+              <div class="tod-cell i1"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i2"></div>
+
+              <!-- SUN -->
+              <div class="tod-day-label">Sun</div>
+              <div class="tod-cell i4"></div><div class="tod-cell i5"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i2"></div><div class="tod-cell i1"></div>
+              <div class="tod-cell i1"></div><div class="tod-cell i2"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i3"></div><div class="tod-cell i3"></div>
+              <div class="tod-cell i4"></div><div class="tod-cell i4"></div>
+              <div class="tod-cell i5"></div><div class="tod-cell i4"></div>
+            </div>
+
+            <!-- Insights badges -->
+            <div class="tod-insights">
+              <div class="tod-badge"><div class="tod-badge-dot" style="background:var(--green);box-shadow:0 0 4px var(--green);"></div><span style="color:var(--t2);">Peak hour: </span><span style="color:var(--green);font-weight:600;">&nbsp;10pm–12am</span></div>
+              <div class="tod-badge"><div class="tod-badge-dot" style="background:var(--cyan);box-shadow:0 0 4px var(--cyan);"></div><span style="color:var(--t2);">Most active: </span><span style="color:var(--cyan);font-weight:600;">&nbsp;Tuesday night</span></div>
+              <div class="tod-badge"><div class="tod-badge-dot" style="background:var(--purple);box-shadow:0 0 4px var(--purple);"></div><span style="color:var(--t2);">Weakest slot: </span><span style="color:var(--purple);font-weight:600;">&nbsp;4am–6am</span></div>
+              <div class="tod-badge"><div class="tod-badge-dot" style="background:var(--orange);box-shadow:0 0 4px var(--orange);"></div><span style="color:var(--t2);">Weekend bonus: </span><span style="color:var(--orange);font-weight:600;">&nbsp;+34% vs weekday</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /charts-grid -->
+
+    </div><!-- /nt-inner -->
+  </div><!-- /newtab -->
+
+</div><!-- /laptop-lid -->
+<div class="laptop-hinge"></div>
+<div class="laptop-base"><div class="trackpad-hint"></div></div>
+</div>
+
+</body>
+</html>

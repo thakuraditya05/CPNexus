@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>CPNexus — Settings & Leaderboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:    #03050e;
+  --deep:    #060912;
+  --surface: #090d1c;
+  --card:    rgba(10,15,32,0.92);
+  --card2:   rgba(13,19,40,0.78);
+  --glass:   rgba(255,255,255,0.022);
+  --glass2:  rgba(255,255,255,0.042);
+
+  --cyan:    #00e5ff;
+  --green:   #00ff7f;
+  --purple:  #9b59f7;
+  --orange:  #ff6030;
+  --yellow:  #ffc832;
+  --red:     #ff3d5a;
+  --teal:    #00d4aa;
+  --pink:    #ff2d78;
+
+  --t1: #e4eaf8;
+  --t2: #7c89aa;
+  --t3: #3d4a68;
+  --t4: #1e2438;
+
+  --b0: rgba(255,255,255,0.028);
+  --b1: rgba(255,255,255,0.055);
+  --b2: rgba(255,255,255,0.09);
+
+  --mono:    'JetBrains Mono', monospace;
+  --display: 'Oxanium', sans-serif;
+  --big:     'Bebas Neue', sans-serif;
+
+  --r1:6px; --r2:10px; --r3:14px; --r4:20px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:14px;}
+body{
+  background:#0c0e1f;
+  font-family:var(--display);
+  color:var(--t1);
+  min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+}
+
+/* ── LAPTOP FRAME ── */
+.laptop-wrap{width:min(1380px,100%);display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 40px 120px rgba(0,0,0,0.85));}
+.laptop-lid{width:100%;background:#181a2a;border-radius:14px 14px 0 0;border:2px solid #2a2d40;border-bottom:none;overflow:hidden;position:relative;}
+.laptop-lid::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:7px;height:7px;background:#0d0e18;border-radius:50%;border:1.5px solid #2a2d40;z-index:10;}
+.laptop-hinge{width:98%;height:8px;background:linear-gradient(180deg,#1e2035,#131525);border-radius:0 0 4px 4px;border:1px solid #2a2d40;border-top:none;}
+.laptop-base{width:92%;height:14px;background:linear-gradient(180deg,#151728,#0e1020);border-radius:0 0 12px 12px;border:1px solid #1e2135;border-top:none;display:flex;align-items:center;justify-content:center;}
+.trackpad-hint{width:80px;height:5px;background:rgba(255,255,255,0.04);border-radius:3px;border:1px solid rgba(255,255,255,0.06);}
+
+/* ── CHROME BAR ── */
+.chrome-bar{background:#11131f;border-bottom:1px solid rgba(255,255,255,0.06);}
+.tab-strip{display:flex;align-items:flex-end;padding:8px 12px 0;gap:1px;background:#0d0f1c;}
+.chrome-tab{display:flex;align-items:center;gap:7px;padding:7px 14px 7px 12px;background:#11131f;border-radius:8px 8px 0 0;font-family:var(--mono);font-size:11px;color:var(--t2);cursor:pointer;min-width:155px;border:1px solid rgba(255,255,255,0.06);border-bottom:none;}
+.chrome-tab.active{color:var(--t1);border-color:rgba(155,89,247,0.15);}
+.tab-favicon{font-size:12px;} .tab-title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} .tab-close{opacity:0.3;font-size:10px;}
+.tab-new{width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--t3);margin-bottom:2px;}
+.addr-row{display:flex;align-items:center;gap:8px;padding:7px 14px 8px;}
+.nav-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:13px;color:var(--t3);}
+.nav-btn.disabled{opacity:0.25;}
+.address-bar{flex:1;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:5px 14px;}
+.addr-lock{font-size:10px;color:var(--green);} .addr-text{font-family:var(--mono);font-size:12px;color:var(--t2);flex:1;}
+.chrome-actions{display:flex;gap:2px;}
+.ca-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:13px;color:var(--t3);}
+.ext-icon{display:flex;align-items:center;gap:4px;padding:3px 8px 3px 6px;background:rgba(155,89,247,0.08);border:1px solid rgba(155,89,247,0.2);border-radius:14px;font-size:13px;}
+.ext-icon span{font-family:var(--mono);font-size:10px;color:var(--purple);font-weight:600;}
+
+/* ── NEWTAB SHELL ── */
+.newtab{background:var(--void);position:relative;overflow:hidden;aspect-ratio:16/10;width:100%;display:flex;flex-direction:column;}
+.newtab::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 45% at -5% -10%,rgba(155,89,247,0.055) 0%,transparent 60%),radial-gradient(ellipse 45% 55% at 110% -5%,rgba(0,212,170,0.045) 0%,transparent 60%),radial-gradient(ellipse 40% 30% at 50% 110%,rgba(0,229,255,0.03) 0%,transparent 60%);pointer-events:none;z-index:0;}
+.grid-overlay{position:absolute;inset:0;background-image:linear-gradient(rgba(155,89,247,0.014) 1px,transparent 1px),linear-gradient(90deg,rgba(155,89,247,0.014) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:1;}
+
+/* ── INNER LAYOUT ── */
+.nt-inner{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;padding:18px 24px 14px;gap:14px;overflow:hidden;}
+
+/* ── TOP BAR ── */
+.top-bar{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;animation:rise 0.5s ease 0.05s both;}
+.page-heading{display:flex;align-items:baseline;gap:12px;}
+.page-heading h1{font-family:var(--big);font-size:28px;letter-spacing:0.06em;background:linear-gradient(135deg,#fff 30%,rgba(155,89,247,0.8));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.page-heading span{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:0.18em;text-transform:uppercase;}
+.inner-tabs{display:flex;gap:3px;}
+.itab{padding:5px 14px;border-radius:8px;font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--t3);cursor:pointer;transition:all 0.2s;border:1px solid transparent;}
+.itab:hover{color:var(--t2);background:var(--glass);}
+.itab.active{background:rgba(155,89,247,0.09);border-color:rgba(155,89,247,0.22);color:var(--purple);}
+
+/* ── PAGE TOGGLE (Settings vs Leaderboard) ── */
+.page-toggle{display:flex;gap:2px;background:rgba(255,255,255,0.03);border:1px solid var(--b1);border-radius:10px;padding:3px;}
+.ptgl{padding:5px 16px;border-radius:7px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.12em;color:var(--t3);cursor:pointer;transition:all 0.2s;}
+.ptgl.active{background:rgba(155,89,247,0.12);color:var(--purple);box-shadow:0 0 12px rgba(155,89,247,0.1);}
+
+/* ════════════════════════════════════
+   SETTINGS LAYOUT — full width panels, no sidebar
+════════════════════════════════════ */
+.settings-wrap{flex:1;display:flex;gap:14px;min-height:0;animation:rise 0.5s ease 0.12s both;}
+
+/* Settings panels — full width now */
+.settings-panels{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:min-content;gap:12px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(155,89,247,0.15) transparent;padding-right:4px;align-content:start;}
+.settings-panels::-webkit-scrollbar{width:3px;}
+.settings-panels::-webkit-scrollbar-thumb{background:rgba(155,89,247,0.15);border-radius:2px;}
+/* Account sync and bookmark span full width */
+.span-full{grid-column:span 2;}
+
+/* Settings card */
+.s-card{background:var(--card);border:1px solid var(--b1);border-radius:var(--r3);padding:16px 18px;position:relative;overflow:hidden;transition:border-color 0.2s;}
+.s-card:hover{border-color:var(--b2);}
+.s-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;border-radius:var(--r3) var(--r3) 0 0;}
+.sc-purple::before{background:linear-gradient(90deg,transparent,var(--purple),transparent);}
+.sc-cyan::before{background:linear-gradient(90deg,transparent,var(--cyan),transparent);}
+.sc-green::before{background:linear-gradient(90deg,transparent,var(--green),transparent);}
+.sc-orange::before{background:linear-gradient(90deg,transparent,var(--orange),transparent);}
+.sc-teal::before{background:linear-gradient(90deg,transparent,var(--teal),transparent);}
+
+.sc-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.sc-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.sci-purple{background:rgba(155,89,247,0.12);border:1px solid rgba(155,89,247,0.2);}
+.sci-cyan{background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);}
+.sci-green{background:rgba(0,255,127,0.08);border:1px solid rgba(0,255,127,0.18);}
+.sci-orange{background:rgba(255,96,48,0.1);border:1px solid rgba(255,96,48,0.2);}
+.sci-teal{background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.18);}
+.sc-title{font-size:13px;font-weight:700;letter-spacing:0.01em;}
+.sc-subtitle{font-family:var(--mono);font-size:9px;color:var(--t3);margin-top:2px;}
+
+/* Form elements */
+.s-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--b0);}
+.s-row:last-child{border-bottom:none;}
+.s-row-info{flex:1;}
+.s-row-label{font-size:11px;font-weight:600;letter-spacing:0.01em;}
+.s-row-sub{font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:2px;}
+
+/* Input field */
+.s-input{flex:1;max-width:200px;background:rgba(255,255,255,0.04);border:1px solid var(--b1);border-radius:var(--r1);padding:6px 10px;font-family:var(--mono);font-size:10px;color:var(--t1);outline:none;transition:border-color 0.2s;}
+.s-input:focus,.s-input:hover{border-color:rgba(155,89,247,0.3);}
+.s-input::placeholder{color:var(--t3);}
+.s-input-wrap{position:relative;max-width:200px;flex-shrink:0;}
+.s-input-icon{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:11px;opacity:0.5;}
+.s-input-verified{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--green);}
+
+/* Toggle pill */
+.pill{width:38px;height:20px;border-radius:10px;position:relative;cursor:pointer;flex-shrink:0;transition:all 0.3s;}
+.pill.on{background:linear-gradient(90deg,var(--purple),var(--cyan));box-shadow:0 0 10px rgba(155,89,247,0.25);}
+.pill.off{background:var(--t4);}
+.pill::after{content:'';position:absolute;top:2px;width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,0.3);transition:left 0.3s;}
+.pill.on::after{left:auto;right:2px;}
+.pill.off::after{left:2px;}
+
+/* Select dropdown */
+.s-select{background:rgba(255,255,255,0.04);border:1px solid var(--b1);border-radius:var(--r1);padding:6px 10px;font-family:var(--mono);font-size:10px;color:var(--t1);outline:none;cursor:pointer;appearance:none;padding-right:24px;}
+
+/* Radio group */
+.radio-group{display:flex;gap:5px;}
+.radio-opt{padding:5px 12px;border-radius:6px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;border:1px solid var(--b1);color:var(--t3);transition:all 0.2s;}
+.radio-opt:hover{color:var(--t2);border-color:var(--b2);}
+.radio-opt.active{background:rgba(155,89,247,0.1);border-color:rgba(155,89,247,0.25);color:var(--purple);}
+.radio-opt.active-green{background:rgba(0,255,127,0.08);border-color:rgba(0,255,127,0.2);color:var(--green);}
+.radio-opt.active-orange{background:rgba(255,96,48,0.08);border-color:rgba(255,96,48,0.2);color:var(--orange);}
+
+/* Website tracker tag */
+.site-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.site-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;background:rgba(255,255,255,0.04);border:1px solid var(--b1);border-radius:6px;font-family:var(--mono);font-size:9px;color:var(--t2);cursor:pointer;transition:all 0.2s;}
+.site-tag:hover{border-color:rgba(255,61,90,0.3);color:var(--red);}
+.site-tag-remove{opacity:0.4;font-size:10px;}
+.site-tag.add-btn{border-style:dashed;color:var(--t3);border-color:rgba(255,255,255,0.06);}
+.site-tag.add-btn:hover{color:var(--purple);border-color:rgba(155,89,247,0.3);}
+
+/* Blocked sites */
+.blocked-site{display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,61,90,0.04);border:1px solid rgba(255,61,90,0.1);border-radius:var(--r1);margin-bottom:4px;}
+.bs-icon{font-size:13px;}
+.bs-name{font-family:var(--mono);font-size:10px;color:var(--t2);flex:1;}
+.bs-pill{padding:1px 7px;border-radius:4px;font-family:var(--mono);font-size:7px;text-transform:uppercase;letter-spacing:0.1em;}
+.bp-blocked{background:rgba(255,61,90,0.1);border:1px solid rgba(255,61,90,0.2);color:var(--red);}
+.bp-allowed{background:rgba(0,255,127,0.06);border:1px solid rgba(0,255,127,0.15);color:var(--green);}
+
+/* Pomodoro timer preview */
+.pomo-preview{background:linear-gradient(135deg,rgba(155,89,247,0.07),rgba(0,229,255,0.04));border:1px solid rgba(155,89,247,0.15);border-radius:var(--r2);padding:12px 14px;display:flex;align-items:center;gap:14px;margin-top:10px;}
+.pomo-timer{font-family:var(--big);font-size:36px;letter-spacing:0.06em;background:linear-gradient(135deg,var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.pomo-info{flex:1;}
+.pomo-title{font-size:11px;font-weight:700;color:var(--purple);}
+.pomo-sub{font-family:var(--mono);font-size:9px;color:var(--t3);margin-top:2px;}
+.pomo-btns{display:flex;gap:6px;}
+.pomo-btn{padding:5px 12px;border-radius:6px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;border:1px solid;transition:all 0.2s;}
+.pb-start{background:rgba(155,89,247,0.12);border-color:rgba(155,89,247,0.3);color:var(--purple);}
+.pb-reset{background:var(--glass);border-color:var(--b1);color:var(--t3);}
+
+/* Notification row */
+.notif-channel{display:flex;align-items:center;gap:10px;padding:7px 10px;background:var(--glass);border:1px solid var(--b0);border-radius:var(--r1);margin-bottom:4px;}
+.nc-icon{font-size:14px;}
+.nc-info{flex:1;}
+.nc-name{font-size:10px;font-weight:600;}
+.nc-sub{font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:1px;}
+
+/* Shortcut row */
+.shortcut-row{display:flex;align-items:center;gap:10px;padding:7px 10px;background:var(--glass);border:1px solid var(--b0);border-radius:var(--r1);margin-bottom:4px;}
+.sr-action{flex:1;font-size:10px;font-weight:600;}
+.sr-keys{display:flex;gap:3px;}
+.key{padding:2px 7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:4px;font-family:var(--mono);font-size:9px;color:var(--t2);box-shadow:0 2px 0 rgba(0,0,0,0.3);}
+
+/* Data refresh buttons */
+.refresh-opts{display:flex;gap:6px;margin-top:6px;}
+.ref-opt{flex:1;padding:8px;border-radius:var(--r1);text-align:center;cursor:pointer;border:1px solid var(--b1);transition:all 0.2s;background:var(--glass);}
+.ref-opt:hover{border-color:var(--b2);}
+.ref-opt.active{background:rgba(0,212,170,0.08);border-color:rgba(0,212,170,0.25);}
+.ro-emoji{font-size:18px;}
+.ro-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;color:var(--t2);}
+.ro-sub{font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:2px;}
+.ref-opt.active .ro-label{color:var(--teal);}
+
+/* ════════════════════════════════════
+   LEADERBOARD PAGE
+════════════════════════════════════ */
+.lb-wrap{flex:1;display:flex;gap:14px;min-height:0;animation:rise 0.5s ease 0.12s both;}
+
+.lb-main{flex:1;display:flex;flex-direction:column;gap:12px;}
+.lb-filters{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.lb-filter-group{display:flex;gap:2px;background:rgba(255,255,255,0.03);border:1px solid var(--b1);border-radius:8px;padding:3px;}
+.lbf{padding:4px 12px;border-radius:6px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);cursor:pointer;transition:all 0.2s;}
+.lbf:hover{color:var(--t2);}
+.lbf.active{background:rgba(0,229,255,0.1);color:var(--cyan);}
+.lb-search{flex:1;display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.04);border:1px solid var(--b1);border-radius:8px;padding:5px 12px;}
+.lb-search-icon{font-size:11px;color:var(--t3);}
+.lb-search input{background:none;border:none;outline:none;font-family:var(--mono);font-size:10px;color:var(--t2);width:100%;}
+.lb-search input::placeholder{color:var(--t3);}
+
+/* Podium */
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:10px;padding:10px 0;flex-shrink:0;}
+.podium-card{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;}
+.pod-avatar{border-radius:50%;background:linear-gradient(135deg,#141a30,#1e1030);display:flex;align-items:center;justify-content:center;position:relative;}
+.pod-rank-badge{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--big);font-size:11px;border:1.5px solid var(--void);}
+.pod-name{font-size:10px;font-weight:700;text-align:center;}
+.pod-handle{font-family:var(--mono);font-size:8px;color:var(--t3);text-align:center;}
+.pod-rating{font-family:var(--big);font-size:20px;letter-spacing:0.04em;line-height:1;}
+.pod-platform{font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:1px;text-align:center;}
+.pod-block{border-radius:var(--r1) var(--r1) 0 0;width:70px;display:flex;align-items:center;justify-content:center;font-family:var(--big);font-size:22px;letter-spacing:0.04em;padding:6px 0;}
+
+/* 1st place */
+.pod-1 .pod-avatar{width:52px;height:52px;font-size:26px;border:2.5px solid var(--yellow);box-shadow:0 0 20px rgba(255,200,50,0.3);}
+.pod-1 .pod-rank-badge{background:var(--yellow);color:#000;}
+.pod-1 .pod-block{height:60px;background:rgba(255,200,50,0.12);border:1px solid rgba(255,200,50,0.2);border-bottom:none;}
+.pod-1 .pod-rating{color:var(--yellow);}
+/* 2nd place */
+.pod-2 .pod-avatar{width:44px;height:44px;font-size:22px;border:2px solid var(--t2);box-shadow:0 0 14px rgba(124,137,170,0.2);}
+.pod-2 .pod-rank-badge{background:var(--t2);color:#000;}
+.pod-2 .pod-block{height:44px;background:rgba(124,137,170,0.08);border:1px solid rgba(124,137,170,0.15);border-bottom:none;}
+.pod-2 .pod-rating{color:var(--t2);}
+/* 3rd place */
+.pod-3 .pod-avatar{width:40px;height:40px;font-size:18px;border:2px solid var(--orange);box-shadow:0 0 12px rgba(255,96,48,0.2);}
+.pod-3 .pod-rank-badge{background:var(--orange);color:#fff;}
+.pod-3 .pod-block{height:36px;background:rgba(255,96,48,0.08);border:1px solid rgba(255,96,48,0.15);border-bottom:none;}
+.pod-3 .pod-rating{color:var(--orange);}
+
+/* Leaderboard table */
+.lb-table{flex:1;display:flex;flex-direction:column;gap:4px;overflow:hidden;}
+.lb-table-header{display:grid;grid-template-columns:36px 1fr 80px 80px 80px 80px 60px;gap:8px;padding:5px 12px;font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:0.12em;color:var(--t3);}
+.lb-row{display:grid;grid-template-columns:36px 1fr 80px 80px 80px 80px 60px;gap:8px;align-items:center;padding:8px 12px;background:var(--card2);border:1px solid var(--b0);border-radius:var(--r2);cursor:pointer;transition:all 0.18s;}
+.lb-row:hover{background:var(--card);border-color:var(--b1);}
+.lb-row.me{background:rgba(155,89,247,0.06);border-color:rgba(155,89,247,0.18);}
+.lb-row.me:hover{background:rgba(155,89,247,0.1);}
+.lb-rank{font-family:var(--big);font-size:16px;letter-spacing:0.04em;color:var(--t2);text-align:center;}
+.lb-rank.gold{color:var(--yellow);}
+.lb-rank.silver{color:var(--t2);}
+.lb-rank.bronze{color:var(--orange);}
+.lb-user{display:flex;align-items:center;gap:8px;}
+.lb-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#141a30,#1e1030);border:1.5px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.lb-uname{font-size:11px;font-weight:600;}
+.lb-uhandle{font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:1px;}
+.lb-cell{font-family:var(--mono);font-size:10px;color:var(--t2);text-align:center;}
+.lb-cell.hi{font-weight:700;}
+.lb-delta{font-family:var(--mono);font-size:10px;font-weight:700;text-align:center;}
+.up{color:var(--green);} .down{color:var(--red);}
+.me-badge{display:inline-flex;align-items:center;padding:1px 6px;background:rgba(155,89,247,0.12);border:1px solid rgba(155,89,247,0.25);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--purple);margin-left:5px;}
+
+/* Right panel */
+.lb-right{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;}
+.lb-mini-card{background:var(--card);border:1px solid var(--b1);border-radius:var(--r3);padding:14px;position:relative;overflow:hidden;}
+.lb-mini-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;}
+.lmc-p::before{background:linear-gradient(90deg,transparent,var(--purple),transparent);}
+.lmc-c::before{background:linear-gradient(90deg,transparent,var(--cyan),transparent);}
+.lmc-g::before{background:linear-gradient(90deg,transparent,var(--green),transparent);}
+
+/* Friend request input */
+.add-friend{display:flex;gap:6px;margin-top:8px;}
+.af-input{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--b1);border-radius:var(--r1);padding:5px 9px;font-family:var(--mono);font-size:9px;color:var(--t1);outline:none;}
+.af-input::placeholder{color:var(--t3);}
+.af-btn{padding:5px 10px;background:rgba(155,89,247,0.12);border:1px solid rgba(155,89,247,0.25);border-radius:var(--r1);font-family:var(--mono);font-size:9px;color:var(--purple);cursor:pointer;white-space:nowrap;}
+
+/* My rank card */
+.my-rank-card{background:linear-gradient(135deg,rgba(155,89,247,0.08),rgba(0,229,255,0.04));border:1px solid rgba(155,89,247,0.2);border-radius:var(--r2);padding:10px 12px;}
+.mr-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.mr-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#141a30,#1e1030);border:2px solid rgba(155,89,247,0.3);display:flex;align-items:center;justify-content:center;font-size:17px;}
+.mr-name{font-size:11px;font-weight:700;}
+.mr-sub{font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:1px;}
+.mr-rank-num{font-family:var(--big);font-size:28px;color:var(--purple);letter-spacing:0.04em;line-height:1;}
+.mr-rank-label{font-family:var(--mono);font-size:8px;color:var(--t3);}
+.mr-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;}
+.mrs{background:rgba(255,255,255,0.03);border:1px solid var(--b0);border-radius:6px;padding:6px 8px;text-align:center;}
+.mrs-v{font-family:var(--mono);font-size:12px;font-weight:700;}
+.mrs-l{font-family:var(--mono);font-size:7px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;}
+
+/* Activity feed */
+.activity-feed{display:flex;flex-direction:column;gap:5px;}
+.af-item{display:flex;align-items:flex-start;gap:7px;padding:6px 8px;background:var(--glass);border:1px solid var(--b0);border-radius:var(--r1);}
+.af-emoji{font-size:12px;flex-shrink:0;margin-top:1px;}
+.af-text{font-size:9px;color:var(--t2);line-height:1.4;}
+.af-time{font-family:var(--mono);font-size:7px;color:var(--t3);margin-top:2px;}
+
+/* Colors */
+.c-cyan{color:var(--cyan);} .c-green{color:var(--green);} .c-purple{color:var(--purple);}
+.c-orange{color:var(--orange);} .c-yellow{color:var(--yellow);} .c-red{color:var(--red);}
+.c-teal{color:var(--teal);}
+
+/* Section label */
+.s-section-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.18em;color:var(--t3);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.ssl-dot{width:4px;height:4px;border-radius:50();}
+
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+@keyframes rise{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div class="laptop-wrap">
+<div class="laptop-lid">
+
+  <!-- Chrome browser -->
+  <div class="chrome-bar">
+    <div class="tab-strip">
+      <div class="chrome-tab active"><span class="tab-favicon">⚙</span><span class="tab-title">CPNexus Settings</span><span class="tab-close">✕</span></div>
+      <div class="chrome-tab"><span class="tab-favicon">📊</span><span class="tab-title">Analytics</span><span class="tab-close">✕</span></div>
+      <div class="chrome-tab"><span class="tab-favicon">🔵</span><span class="tab-title">Codeforces</span><span class="tab-close">✕</span></div>
+      <div class="tab-new">＋</div>
+    </div>
+    <div class="addr-row">
+      <div class="nav-btn disabled">←</div>
+      <div class="nav-btn disabled">→</div>
+      <div class="nav-btn">↻</div>
+      <div class="address-bar">
+        <span class="addr-lock">🔒</span>
+        <span class="addr-text">chrome://newtab — CPNexus · Settings & Leaderboard</span>
+      </div>
+      <div class="chrome-actions">
+        <div class="ca-btn">☆</div>
+        <div class="ext-icon">⚡<span style="color:var(--purple);">CPNexus</span></div>
+        <div class="ca-btn">⋮</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New tab content -->
+  <div class="newtab">
+    <div class="grid-overlay"></div>
+
+    <div class="nt-inner">
+
+      <!-- TOP BAR -->
+      <div class="top-bar">
+        <div class="page-heading">
+          <h1 id="page-title">SETTINGS</h1>
+          <span id="page-sub">// configure your cpnexus experience</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="inner-tabs">
+            <div class="itab">Dashboard</div>
+            <div class="itab">Analytics</div>
+            <div class="itab">Contests</div>
+            <div class="itab">Ratings</div>
+            <div class="itab active">Settings</div>
+          </div>
+          <div class="page-toggle">
+            <div class="ptgl active" onclick="showPage('settings',this)">⚙ Settings</div>
+            <div class="ptgl" onclick="showPage('leaderboard',this)">🏆 Leaderboard</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ SETTINGS PAGE ════ -->
+      <div id="page-settings" class="settings-wrap">
+
+        <!-- Panels -->
+        <div class="settings-panels">
+
+          <!-- 1. ACCOUNT SYNC -->
+          <div class="s-card sc-purple span-full">
+            <div class="sc-header">
+              <div class="sc-icon sci-purple">🔗</div>
+              <div><div class="sc-title">Account Sync</div><div class="sc-subtitle">Connect your competitive programming handles</div></div>
+            </div>
+            <div class="s-row">
+              <div class="s-row-info"><div class="s-row-label">🟡 LeetCode Handle</div><div class="s-row-sub">Fetches solved count, rating, contest history</div></div>
+              <div class="s-input-wrap"><input class="s-input" value="rahul_sharma_lc" placeholder="your-handle"><span class="s-input-verified">✓</span></div>
+            </div>
+            <div class="s-row">
+              <div class="s-row-info"><div class="s-row-label">🔵 Codeforces Handle</div><div class="s-row-sub">Rating, rank, contest participation</div></div>
+              <div class="s-input-wrap"><input class="s-input" value="rahul_dev_cf" placeholder="your-handle"><span class="s-input-verified">✓</span></div>
+            </div>
+            <div class="s-row">
+              <div class="s-row-info"><div class="s-row-label">🟤 CodeChef Handle</div><div class="s-row-sub">Star rating, solved problems, contests</div></div>
+              <div class="s-input-wrap"><input class="s-input" value="rahul_cc" placeholder="your-handle"><span class="s-input-verified">✓</span></div>
+            </div>
+            <div class="s-row">
+              <div class="s-row-info"><div class="s-row-label">🟠 AtCoder Handle</div><div class="s-row-sub">Rating, color, participation history</div></div>
+              <div class="s-input-wrap"><input class="s-input" placeholder="your-handle" style="border-color:rgba(255,96,48,0.3);"><span class="s-input-icon">⚠</span></div>
+            </div>
+          </div>
+
+          <!-- 2. WEBSITE TRACKER -->
+          <div class="s-card sc-cyan">
+            <div class="sc-header">
+              <div class="sc-icon sci-cyan">🌐</div>
+              <div><div class="sc-title">Website Tracker</div><div class="sc-subtitle">Track any website for updates — not just MANIT</div></div>
+            </div>
+            <div class="s-row">
+              <div class="s-row-info"><div class="s-row-label">Check Interval</div><div class="s-row-sub">How often to poll tracked websites</div></div>
+              <div class="radio-group">
+                <div class="radio-opt">5m</div>
+                <div class="radio-opt active">10m</div>
+                <div class="radio-opt">15m</div>
+                <div class="radio-opt">30m</div>
+              </div>
+            </div>
+            <div class="s-row">
+              <div class="s-row-info"><div class="s-row-label">Notify on Change</div><div class="s-row-sub">Desktop notification when page updates</div></div>
+              <div class="pill on"></div>
+            </div>
+            <div style="margin-top:4px;">
+              <div class="s-row-label" style="font-size:10px;color:var(--t2);margin-bottom:8px;">📌 Tracked Websites</div>
+              <div class="site-tags">
+                <div class="site-tag">🏫 manit.ac.in <span class="site-tag-remove">✕</span></div>
+                <div class="site-tag">📋 placement.manit.ac.in <span class="site-tag-remove">✕</span></div>
+                <div class="site-tag">🏆 codeforces.com/blog <span class="site-tag-remove">✕</span></div>
+                <div class="site-tag">📰 leetcode.com/discuss <span class="site-tag-remove">✕</span></div>
+                <div class="site-tag">🎓 nptel.ac.in <span class="site-tag-remove">✕</span></div>
+                <div class="site-tag add-btn">＋ Add Website</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. ZEN MODE -->
+          <div class="s-card sc-green span-full">
+            <div class="sc-header">
+              <div class="sc-icon sci-green">🧘</div>
+              <div><div class="sc-title">Zen Mode — Focus Timer</div><div class="sc-subtitle">Block distractions. Ship DSA. Pomodoro-style.</div></div>
+            </div>
+            <div class="s-row">
+              <div class="s-row-info"><div class="s-row-label">Focus Duration</div><div class="s-row-sub">How long each focus session runs</div></div>
+              <div class="radio-group">
+                <div class="radio-opt">25m</div>
+                <div class="radio-opt active-green active">45m</div>
+                <div class="radio-opt">60m</div>
+                <div class="radio-opt">90m</div>
+              </div>
+            </div>
+            <div class="s-row">
+              <div class="s-row-info"><div class="s-row-label">Break Duration</div><div class="s-row-sub">Rest time after each session</div></div>
+              <div class="radio-group">
+                <div class="radio-opt active-green active">5m</div>
+                <div class="radio-opt">10m</div>
+                <div class="radio-opt">15m</div>
+              </div>
+            </div>
+            <div class="s-row">
+              <div class="s-row-info"><div class="s-row-label">Block Message Style</div><div class="s-row-sub">What shows when you try to visit blocked site</div></div>
+              <div class="radio-group">
+                <div class="radio-opt active">Savage 😤</div>
+                <div class="radio-opt">Gentle 🙏</div>
+                <div class="radio-opt">Silent 🔇</div>
+              </div>
+            </div>
+            <!-- Timer preview -->
+            <div class="pomo-preview">
+              <div class="pomo-timer">45:00</div>
+              <div class="pomo-info">
+                <div class="pomo-title">🎯 Session Ready</div>
+                <div class="pomo-sub">Blocking 6 sites · "Bhai, pehle DP solve kar le!" mode</div>
+              </div>
+              <div class="pomo-btns">
+                <div class="pomo-btn pb-start">▶ Start</div>
+                <div class="pomo-btn pb-reset">↺ Reset</div>
+              </div>
+            </div>
+            <!-- Blocked sites -->
+            <div style="margin-top:10px;">
+              <div class="s-row-label" style="font-size:10px;color:var(--t2);margin-bottom:6px;">🚫 Blocked During Focus</div>
+              <div class="blocked-site"><span class="bs-icon">📺</span><span class="bs-name">youtube.com</span><span class="bs-pill bp-blocked">Blocked</span><div class="pill on" style="margin-left:auto;width:32px;height:17px;"></div></div>
+              <div class="blocked-site"><span class="bs-icon">📸</span><span class="bs-name">instagram.com</span><span class="bs-pill bp-blocked">Blocked</span><div class="pill on" style="margin-left:auto;width:32px;height:17px;"></div></div>
+              <div class="blocked-site"><span class="bs-icon">🤖</span><span class="bs-name">reddit.com</span><span class="bs-pill bp-blocked">Blocked</span><div class="pill on" style="margin-left:auto;width:32px;height:17px;"></div></div>
+              <div class="blocked-site"><span class="bs-icon">🐦</span><span class="bs-name">twitter.com</span><span class="bs-pill bp-allowed">Allowed</span><div class="pill off" style="margin-left:auto;width:32px;height:17px;"></div></div>
+              <div style="margin-top:6px;display:flex;">
+                <div class="site-tag add-btn" style="font-size:9px;">＋ Add to Block List</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. NOTIFICATIONS -->
+          <div class="s-card sc-orange">
+            <div class="sc-header">
+              <div class="sc-icon sci-orange">🔔</div>
+              <div><div class="sc-title">Notification Preferences</div><div class="sc-subtitle">Control when and how CPNexus alerts you</div></div>
+            </div>
+            <div class="notif-channel">
+              <span class="nc-icon">🖥️</span>
+              <div class="nc-info"><div class="nc-name">Desktop Notifications</div><div class="nc-sub">Chrome native push — works even when tab is closed</div></div>
+              <div class="pill on"></div>
+            </div>
+            <div class="notif-channel">
+              <span class="nc-icon">🔊</span>
+              <div class="nc-info"><div class="nc-name">Sound Alert</div><div class="nc-sub">Play a sound when contest is about to start</div></div>
+              <div class="pill off"></div>
+            </div>
+            <div class="notif-channel">
+              <span class="nc-icon">⏰</span>
+              <div class="nc-info"><div class="nc-name">Contest Reminder</div><div class="nc-sub">How early to notify before contest starts</div></div>
+              <div class="radio-group">
+                <div class="radio-opt">5m</div>
+                <div class="radio-opt active-orange active">15m</div>
+                <div class="radio-opt">30m</div>
+                <div class="radio-opt">1h</div>
+              </div>
+            </div>
+            <div class="notif-channel">
+              <span class="nc-icon">🌐</span>
+              <div class="nc-info"><div class="nc-name">Website Change Alert</div><div class="nc-sub">Notify when tracked website content updates</div></div>
+              <div class="pill on"></div>
+            </div>
+            <div class="notif-channel" style="border-bottom:none;">
+              <span class="nc-icon">🔕</span>
+              <div class="nc-info"><div class="nc-name">Do Not Disturb</div><div class="nc-sub">Silence all alerts between 3am – 7am</div></div>
+              <div class="pill on"></div>
+            </div>
+          </div>
+
+          <!-- 5. BOOKMARK MANAGER -->
+          <div class="s-card sc-teal span-full">
+            <div class="sc-header">
+              <div class="sc-icon sci-teal">🔖</div>
+              <div>
+                <div class="sc-title">Bookmark Manager</div>
+                <div class="sc-subtitle">Jab bhi koi page bookmark karo — CPNexus automatically yahan save kar leta hai</div>
+              </div>
+              <!-- Search bookmarks -->
+              <div style="margin-left:auto;display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.04);border:1px solid var(--b1);border-radius:8px;padding:5px 11px;">
+                <span style="font-size:10px;color:var(--t3);">🔍</span>
+                <input placeholder="Search bookmarks..." style="background:none;border:none;outline:none;font-family:var(--mono);font-size:9px;color:var(--t2);width:140px;" />
+              </div>
+            </div>
+
+            <!-- Filter tabs -->
+            <div style="display:flex;gap:4px;flex-shrink:0;">
+              <div class="radio-opt active" style="font-size:8px;padding:3px 10px;">All (14)</div>
+              <div class="radio-opt" style="font-size:8px;padding:3px 10px;">CP 🏆</div>
+              <div class="radio-opt" style="font-size:8px;padding:3px 10px;">Problems 🧩</div>
+              <div class="radio-opt" style="font-size:8px;padding:3px 10px;">Editorials 📝</div>
+              <div class="radio-opt" style="font-size:8px;padding:3px 10px;">Resources 📚</div>
+              <div class="radio-opt" style="font-size:8px;padding:3px 10px;">College 🏫</div>
+              <div style="margin-left:auto;display:flex;align-items:center;gap:4px;">
+                <div class="radio-opt" style="font-size:8px;padding:3px 10px;">Grid</div>
+                <div class="radio-opt active" style="font-size:8px;padding:3px 10px;">List</div>
+              </div>
+            </div>
+
+            <!-- Bookmark list — 2 column grid -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;flex:1;overflow:hidden;">
+
+              <!-- Bookmark item -->
+              <div class="bm-item" style="display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--glass);border:1px solid var(--b0);border-radius:var(--r2);cursor:pointer;transition:all 0.18s;position:relative;overflow:hidden;" onmouseover="this.style.background='var(--glass2)';this.style.borderColor='rgba(0,212,170,0.15)'" onmouseout="this.style.background='var(--glass)';this.style.borderColor='var(--b0)'">
+                <div style="width:28px;height:28px;border-radius:6px;background:rgba(255,96,48,0.1);border:1px solid rgba(255,96,48,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🟡</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">LC 2444 — Count Subarrays</div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:2px;">leetcode.com · Hard</div>
+                  <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
+                    <span style="padding:1px 6px;background:rgba(255,61,90,0.1);border:1px solid rgba(255,61,90,0.2);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--red);">Hard</span>
+                    <span style="padding:1px 6px;background:rgba(155,89,247,0.08);border:1px solid rgba(155,89,247,0.18);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--purple);">Sliding Window</span>
+                  </div>
+                </div>
+                <div style="font-family:var(--mono);font-size:7px;color:var(--t3);flex-shrink:0;">2h ago</div>
+              </div>
+
+              <div class="bm-item" style="display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--glass);border:1px solid var(--b0);border-radius:var(--r2);cursor:pointer;transition:all 0.18s;" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
+                <div style="width:28px;height:28px;border-radius:6px;background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔵</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">CF 1930C — Ski Resort</div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:2px;">codeforces.com · Div.2 E</div>
+                  <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
+                    <span style="padding:1px 6px;background:rgba(255,200,50,0.08);border:1px solid rgba(255,200,50,0.18);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--yellow);">2400</span>
+                    <span style="padding:1px 6px;background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.15);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--cyan);">Graphs</span>
+                  </div>
+                </div>
+                <div style="font-family:var(--mono);font-size:7px;color:var(--t3);flex-shrink:0;">5h ago</div>
+              </div>
+
+              <div class="bm-item" style="display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--glass);border:1px solid var(--b0);border-radius:var(--r2);cursor:pointer;transition:all 0.18s;" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
+                <div style="width:28px;height:28px;border-radius:6px;background:rgba(0,255,127,0.08);border:1px solid rgba(0,255,127,0.15);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">📝</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">CP-Algorithms: Segment Trees</div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:2px;">cp-algorithms.com · Editorial</div>
+                  <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
+                    <span style="padding:1px 6px;background:rgba(0,255,127,0.07);border:1px solid rgba(0,255,127,0.15);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--green);">Resource</span>
+                    <span style="padding:1px 6px;background:rgba(155,89,247,0.08);border:1px solid rgba(155,89,247,0.18);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--purple);">Seg Tree</span>
+                  </div>
+                </div>
+                <div style="font-family:var(--mono);font-size:7px;color:var(--t3);flex-shrink:0;">Yesterday</div>
+              </div>
+
+              <div class="bm-item" style="display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--glass);border:1px solid var(--b0);border-radius:var(--r2);cursor:pointer;transition:all 0.18s;" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
+                <div style="width:28px;height:28px;border-radius:6px;background:rgba(255,96,48,0.1);border:1px solid rgba(255,96,48,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🏫</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">MANIT Exam Schedule PDF</div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:2px;">manit.ac.in · PDF Document</div>
+                  <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
+                    <span style="padding:1px 6px;background:rgba(255,96,48,0.08);border:1px solid rgba(255,96,48,0.18);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--orange);">College</span>
+                    <span style="padding:1px 6px;background:rgba(255,200,50,0.07);border:1px solid rgba(255,200,50,0.15);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--yellow);">Important</span>
+                  </div>
+                </div>
+                <div style="font-family:var(--mono);font-size:7px;color:var(--t3);flex-shrink:0;">2d ago</div>
+              </div>
+
+              <div class="bm-item" style="display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--glass);border:1px solid var(--b0);border-radius:var(--r2);cursor:pointer;transition:all 0.18s;" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
+                <div style="width:28px;height:28px;border-radius:6px;background:rgba(155,89,247,0.1);border:1px solid rgba(155,89,247,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🎥</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Striver's DP Series — YouTube</div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:2px;">youtube.com · Playlist</div>
+                  <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
+                    <span style="padding:1px 6px;background:rgba(155,89,247,0.08);border:1px solid rgba(155,89,247,0.18);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--purple);">DP</span>
+                    <span style="padding:1px 6px;background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.15);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--cyan);">Video</span>
+                  </div>
+                </div>
+                <div style="font-family:var(--mono);font-size:7px;color:var(--t3);flex-shrink:0;">3d ago</div>
+              </div>
+
+              <div class="bm-item" style="display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--glass);border:1px solid var(--b0);border-radius:var(--r2);cursor:pointer;transition:all 0.18s;" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
+                <div style="width:28px;height:28px;border-radius:6px;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.15);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🐙</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">kactl — ICPC Team Library</div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--t3);margin-top:2px;">github.com · Repository</div>
+                  <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
+                    <span style="padding:1px 6px;background:rgba(0,255,127,0.07);border:1px solid rgba(0,255,127,0.15);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--green);">Template</span>
+                    <span style="padding:1px 6px;background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.15);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--cyan);">ICPC</span>
+                  </div>
+                </div>
+                <div style="font-family:var(--mono);font-size:7px;color:var(--t3);flex-shrink:0;">4d ago</div>
+              </div>
+
+            </div>
+
+            <!-- Bottom bar -->
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding-top:6px;border-top:1px solid var(--b0);">
+              <div style="font-family:var(--mono);font-size:9px;color:var(--t3);">14 bookmarks saved · Chrome sync enabled</div>
+              <div style="display:flex;gap:6px;">
+                <div style="padding:4px 12px;background:rgba(0,212,170,0.07);border:1px solid rgba(0,212,170,0.18);border-radius:6px;font-family:var(--mono);font-size:9px;color:var(--teal);cursor:pointer;">📤 Export</div>
+                <div style="padding:4px 12px;background:rgba(155,89,247,0.08);border:1px solid rgba(155,89,247,0.2);border-radius:6px;font-family:var(--mono);font-size:9px;color:var(--purple);cursor:pointer;">＋ Add Manually</div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /settings-panels -->
+      </div><!-- /settings-wrap -->
+
+      <!-- ════ LEADERBOARD PAGE ════ -->
+      <div id="page-leaderboard" class="lb-wrap" style="display:none;">
+
+        <div class="lb-main">
+          <!-- Filters -->
+          <div class="lb-filters">
+            <div class="lb-filter-group">
+              <div class="lbf active">All</div>
+              <div class="lbf">CF</div>
+              <div class="lbf">LC</div>
+              <div class="lbf">CC</div>
+              <div class="lbf">AT</div>
+            </div>
+            <div class="lb-filter-group">
+              <div class="lbf active">Friends</div>
+              <div class="lbf">MANIT</div>
+              <div class="lbf">Global</div>
+            </div>
+            <div class="lb-search">
+              <span class="lb-search-icon">🔍</span>
+              <input placeholder="Search player..." />
+            </div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);white-space:nowrap;">Updated 4m ago</div>
+          </div>
+
+          <!-- Podium — Top 3 -->
+          <div class="podium">
+            <!-- 2nd -->
+            <div class="podium-card pod-2" style="margin-bottom:0;">
+              <div class="pod-avatar"><span>🦊</span></div>
+              <div class="pod-name">Aryan K.</div>
+              <div class="pod-handle">@aryan_cf</div>
+              <div class="pod-rating">2014</div>
+              <div class="pod-platform">Codeforces</div>
+              <div class="pod-block">2</div>
+            </div>
+            <!-- 1st -->
+            <div class="podium-card pod-1">
+              <div style="font-size:20px;margin-bottom:2px;">👑</div>
+              <div class="pod-avatar"><span>🐺</span></div>
+              <div class="pod-name">Siddharth R.</div>
+              <div class="pod-handle">@sidd_ace</div>
+              <div class="pod-rating">2187</div>
+              <div class="pod-platform">Codeforces</div>
+              <div class="pod-block">1</div>
+            </div>
+            <!-- 3rd -->
+            <div class="podium-card pod-3" style="margin-bottom:0;">
+              <div class="pod-avatar"><span>🦅</span></div>
+              <div class="pod-name">Priya M.</div>
+              <div class="pod-handle">@priya_lc</div>
+              <div class="pod-rating">1996</div>
+              <div class="pod-platform">LeetCode</div>
+              <div class="pod-block">3</div>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="lb-table">
+            <div class="lb-table-header">
+              <div style="text-align:center;">#</div>
+              <div>Player</div>
+              <div style="text-align:center;">CF</div>
+              <div style="text-align:center;">LC</div>
+              <div style="text-align:center;">CC</div>
+              <div style="text-align:center;">Solved</div>
+              <div style="text-align:center;">Δ Week</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank gold">1</div>
+              <div class="lb-user"><div class="lb-av">🐺</div><div><div class="lb-uname">Siddharth R.</div><div class="lb-uhandle">@sidd_ace</div></div></div>
+              <div class="lb-cell hi c-cyan">2187</div><div class="lb-cell">1890</div><div class="lb-cell">5★</div><div class="lb-cell hi">1842</div>
+              <div class="lb-delta up">+94</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank silver">2</div>
+              <div class="lb-user"><div class="lb-av">🦊</div><div><div class="lb-uname">Aryan K.</div><div class="lb-uhandle">@aryan_cf</div></div></div>
+              <div class="lb-cell hi c-cyan">2014</div><div class="lb-cell">1754</div><div class="lb-cell">4★</div><div class="lb-cell hi">1564</div>
+              <div class="lb-delta up">+47</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank bronze">3</div>
+              <div class="lb-user"><div class="lb-av">🦅</div><div><div class="lb-uname">Priya M.</div><div class="lb-uhandle">@priya_lc</div></div></div>
+              <div class="lb-cell">1743</div><div class="lb-cell hi c-orange">1996</div><div class="lb-cell">4★</div><div class="lb-cell hi">2014</div>
+              <div class="lb-delta up">+62</div>
+            </div>
+            <div class="lb-row me">
+              <div class="lb-rank" style="color:var(--purple);">4</div>
+              <div class="lb-user"><div class="lb-av">🧑‍💻</div><div><div class="lb-uname">Rahul S. <span class="me-badge">YOU</span></div><div class="lb-uhandle">@rahul_dev</div></div></div>
+              <div class="lb-cell hi c-cyan">1847</div><div class="lb-cell hi c-orange">1964</div><div class="lb-cell">4★</div><div class="lb-cell hi">1284</div>
+              <div class="lb-delta up">+51</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank">5</div>
+              <div class="lb-user"><div class="lb-av">🐉</div><div><div class="lb-uname">Vikram T.</div><div class="lb-uhandle">@vik_at</div></div></div>
+              <div class="lb-cell">1698</div><div class="lb-cell">1812</div><div class="lb-cell">3★</div><div class="lb-cell hi">1156</div>
+              <div class="lb-delta down">−18</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank">6</div>
+              <div class="lb-user"><div class="lb-av">🦁</div><div><div class="lb-uname">Nisha G.</div><div class="lb-uhandle">@nisha_cp</div></div></div>
+              <div class="lb-cell">1612</div><div class="lb-cell">1788</div><div class="lb-cell">3★</div><div class="lb-cell hi">987</div>
+              <div class="lb-delta up">+29</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right panel -->
+        <div class="lb-right">
+
+          <!-- My rank card -->
+          <div class="lb-mini-card lmc-p">
+            <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:0.15em;color:var(--t3);margin-bottom:8px;">Your Standing</div>
+            <div class="my-rank-card">
+              <div class="mr-top">
+                <div class="mr-av">🧑‍💻</div>
+                <div><div class="mr-name">Rahul Sharma</div><div class="mr-sub">@rahul_dev</div></div>
+              </div>
+              <div style="display:flex;align-items:baseline;gap:6px;">
+                <div class="mr-rank-num">#4</div>
+                <div class="mr-rank-label">of 6 friends</div>
+              </div>
+              <div class="mr-stats">
+                <div class="mrs"><div class="mrs-v c-green">+51</div><div class="mrs-l">This Week</div></div>
+                <div class="mrs"><div class="mrs-v c-cyan">1847</div><div class="mrs-l">CF Rating</div></div>
+                <div class="mrs"><div class="mrs-v c-orange">1964</div><div class="mrs-l">LC Rating</div></div>
+                <div class="mrs"><div class="mrs-v c-purple">218</div><div class="mrs-l">Solved</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add friend -->
+          <div class="lb-mini-card lmc-c">
+            <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:0.15em;color:var(--t3);margin-bottom:6px;">Add Friend</div>
+            <div style="font-size:10px;color:var(--t2);margin-bottom:6px;">Enter CF / LC handle to add</div>
+            <div class="add-friend">
+              <input class="af-input" placeholder="friend's handle..." />
+              <div class="af-btn">Add ＋</div>
+            </div>
+          </div>
+
+          <!-- Activity feed -->
+          <div class="lb-mini-card lmc-g" style="flex:1;">
+            <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:0.15em;color:var(--t3);margin-bottom:8px;">Live Activity</div>
+            <div class="activity-feed">
+              <div class="af-item"><div class="af-emoji">⚡</div><div><div class="af-text"><strong style="color:var(--cyan)">Siddharth</strong> reached 2200 on Codeforces</div><div class="af-time">2 min ago</div></div></div>
+              <div class="af-item"><div class="af-emoji">🏆</div><div><div class="af-text"><strong style="color:var(--orange)">Aryan</strong> finished Rank 89 in CF Round 987</div><div class="af-time">1h ago</div></div></div>
+              <div class="af-item"><div class="af-emoji">🔥</div><div><div class="af-text"><strong style="color:var(--green)">Priya</strong> solved 5 problems today</div><div class="af-time">2h ago</div></div></div>
+              <div class="af-item"><div class="af-emoji">📈</div><div><div class="af-text"><strong style="color:var(--purple)">You</strong> gained +63 rating on CF!</div><div class="af-time">3h ago</div></div></div>
+              <div class="af-item"><div class="af-emoji">💀</div><div><div class="af-text"><strong style="color:var(--red)">Vikram</strong> lost rating — cheer him up?</div><div class="af-time">4h ago</div></div></div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /leaderboard -->
+
+    </div>
+  </div>
+</div>
+<div class="laptop-hinge"></div>
+<div class="laptop-base"><div class="trackpad-hint"></div></div>
+</div>
+
+<script>
+function showPage(page, btn) {
+  document.querySelectorAll('.ptgl').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (page === 'settings') {
+    document.getElementById('page-settings').style.display = 'flex';
+    document.getElementById('page-leaderboard').style.display = 'none';
+    document.getElementById('page-title').textContent = 'SETTINGS';
+    document.getElementById('page-sub').textContent = '// configure your cpnexus experience';
+  } else {
+    document.getElementById('page-settings').style.display = 'none';
+    document.getElementById('page-leaderboard').style.display = 'flex';
+    document.getElementById('page-title').textContent = 'LEADERBOARD';
+    document.getElementById('page-sub').textContent = '// compete with your friends';
+  }
+}
+</script>
+</body>
+</html>

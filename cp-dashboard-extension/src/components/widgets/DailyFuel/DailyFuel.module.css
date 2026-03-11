@@ -1,0 +1,200 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ── HEADER ── */
+.sh {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.shTitle {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--t3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.shDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: 0 0 5px var(--pink);
+  animation: blink 2s ease-in-out infinite;
+}
+/* 🔴 DOT STYLES FIX 🔴 */
+.shDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  animation: blink 2s ease-in-out infinite;
+}
+.sdPink {
+  background: var(--pink);
+  box-shadow: 0 0 5px var(--pink);
+}
+
+.nextBtn {
+  width: 24px;
+  height: 24px;
+  background: var(--glass);
+  border: 1px solid var(--b1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--t3);
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+.nextBtn:hover {
+  color: var(--t2);
+  border-color: var(--b2);
+  transform: rotate(90deg);
+} /* Added a cool rotation effect */
+.nextBtn {
+  width: 24px;
+  height: 24px;
+  background: var(--glass);
+  border: 1px solid var(--b1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--t3);
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+.nextBtn:hover {
+  color: var(--t2);
+  border-color: var(--b2);
+  transform: rotate(180deg);
+} /* Rotation extended for better feel */
+
+/* ── WRAPPER ── */
+.inspireWrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+}
+
+/* ── QUOTE COMPONENT ── */
+.inspireQuote {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px;
+  animation: fadeIn 0.4s ease-in-out;
+  color: black;
+}
+.iqText {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  background: linear-gradient(135deg, var(--t1) 50%, rgba(155, 89, 247, 0.7));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.iqAuthor {
+  font-family: var(--mono);
+  font-size: 8px;
+  /* color: var(--t3); */
+  color: rgba(0, 187, 255, 0.448);
+  font-size: 0.9rem;;
+  margin-top: 6px;
+}
+
+/* ── WEATHER COMPONENTS ROW ── */
+.inspireBottom {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.ibCard {
+  flex: 1;
+  background: var(--glass);
+  border: 1px solid var(--b0);
+  border-radius: var(--r1);
+  padding: 7px 10px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+.ibCard:hover {
+  transform: translateY(-3px);
+  background: var(--glass2);
+}
+
+.ibcIcon {
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+.ibcVal {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+}
+.ibcLbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--t3);
+  /* color:red; */
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 1px;
+}
+
+/* ── COLOR UTILITIES ── */
+.cYellow {
+  color: var(--yellow);
+}
+.cCyan {
+  color: var(--cyan);
+}
+.cOrange {
+  color: var(--orange);
+  font-size: 10px;
+}
+.cPurple {
+  color: var(--purple);
+  font-size: 10px;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

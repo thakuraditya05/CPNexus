@@ -1,0 +1,96 @@
+.gridContainer {
+  display: grid;
+  /* Auto-fit taaki screen size ke hisaab se icons adjust ho jayein */
+  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+  gap: 16px;
+  width: 100%;
+  padding: 10px;
+}
+
+.linkTile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 10px;
+  border-radius: 16px;
+}
+
+.linkTile:hover {
+  transform: translateY(-5px) scale(1.05);
+  background: var(--glass2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.iconImage {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px; /* Premium smooth corners */
+  object-fit: contain; /* Ensures logo is not cropped */
+  
+  /* WHITE BG HATA DIYA - Ab yahan dark glass effect hai */
+  background-color: rgba(255, 255, 255, 0.03); 
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  
+  padding: 8px; /* Inner spacing taaki logo center me rahe */
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+.linkTile:hover .iconImage {
+  background-color: rgba(255, 255, 255, 0.08); /* Thoda bright on hover */
+  border-color: rgba(255, 255, 255, 0.15);
+  /* Cyan color ka soft glow piche ki taraf */
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 229, 255, 0.15);
+  transform: scale(1.05);
+}
+
+.linkName {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--t2);
+  text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  transition: color 0.2s;
+}
+
+.linkTile:hover .linkName {
+  color: var(--t1);
+}
+
+/* ADD BUTTON STYLE */
+.addButton {
+  border: 1px dashed var(--b2);
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.addButton:hover {
+  border-color: var(--cyan);
+  background: rgba(0, 229, 255, 0.05);
+}
+
+/* Taki Add Button ka icon bhi match kare */
+.addIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--t3);
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--b2);
+  transition: all 0.3s ease;
+}
+.addButton:hover .addIcon {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  background-color: rgba(0, 229, 255, 0.05);
+  transform: scale(1.05);
+}

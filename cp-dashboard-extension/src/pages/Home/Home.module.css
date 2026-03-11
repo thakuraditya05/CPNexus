@@ -1,0 +1,190 @@
+.topRow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ══ MAIN GRID ══ */
+.mainGrid {
+  padding: 10px;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1.35fr 1fr;
+  grid-template-rows: 0.75fr 0.75fr;
+  overflow: hidden;
+  gap: 14px;
+  min-height: 0;
+  animation: rise 0.5s ease 0.12s both;
+  max-height: 74vh /* Ensure it doesn't exceed 80% of viewport height */;
+}
+
+/* ══ BASE CARD STYLES ══ */
+.card {
+  background: var(--card);
+  border: 1px solid var(--b1);
+  border-radius: var(--r3);
+  padding: 16px;
+  backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+ /* --- Scroll Logic --- */
+  overflow-y: auto; /* Content zyada hone par scroll dikhayega */
+  overflow-x: hidden; /* Horizontal scroll block karega */
+  max-height: 100%; /* Card ko grid cell se bada nahi hone dega */
+
+
+  transition: border-color 0.25s;
+}
+.card::-webkit-scrollbar {
+  width: 4px; /* Ekdum patli line */
+}
+.card::-webkit-scrollbar-track {
+  background: transparent; /* Track ko invisible rakho taaki background dikhe */
+}
+/* 2. Scrollbar ka moving part (Thumb) - General Style */
+.card::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05); /* Default: bahut halka defused white */
+  transition: background 0.3s ease;
+}
+
+
+.card:hover {
+  border-color: var(--b2);
+}
+
+/* Top Glow Line on Hover */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  border-radius: var(--r3) var(--r3) 0 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.card:hover::before { opacity: 1; }
+
+.cCyan::before   { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+.cPurple::before { background: linear-gradient(90deg, transparent, var(--purple), transparent); }
+.cGreen::before  { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+.cOrange::before { background: linear-gradient(90deg, transparent, var(--orange), transparent); }
+.cPink::before   { background: linear-gradient(90deg, transparent, var(--pink), transparent); }
+
+/* Spans */
+.span2r { grid-row: span 2; }
+
+/* ══ SECTION HEADERS (sh) ══ */
+.sh {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.shTitle {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--t3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: blink 2s ease-in-out infinite;
+}
+
+.sdCyan   { background: var(--cyan);   box-shadow: 0 0 5px var(--cyan); }
+.sdGreen  { background: var(--green);  box-shadow: 0 0 5px var(--green); }
+.sdPurple { background: var(--purple); box-shadow: 0 0 5px var(--purple); }
+.sdOrange { background: var(--orange); box-shadow: 0 0 5px var(--orange); }
+.sdPink   { background: var(--pink);   box-shadow: 0 0 5px var(--pink); }
+
+/* Header Actions (Manage ->, Add Task ->) */
+.shAction {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--cyan);
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.shAction:hover { opacity: 1; }
+
+.shRightActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.divider {
+  color: var(--t4);
+  font-size: 10px;
+}
+
+.pomoZenBadge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  background: rgba(255, 96, 48, 0.06);
+  border: 1px solid rgba(255, 96, 48, 0.15);
+  border-radius: 5px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--orange);
+}
+
+.iconAction {
+  width: 24px;
+  height: 24px;
+  background: var(--glass);
+  border: 1px solid var(--b1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--t3);
+  transition: all 0.2s;
+}
+.iconAction:hover {
+  color: var(--t2);
+  border-color: var(--b2);
+}
+
+/* Animations */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Temporary Placeholder for components */
+.placeholderBox {
+  flex: 1;
+  border: 1px dashed var(--b2);
+  border-radius: var(--r2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--t3);
+  font-family: var(--mono);
+  font-size: 11px;
+}

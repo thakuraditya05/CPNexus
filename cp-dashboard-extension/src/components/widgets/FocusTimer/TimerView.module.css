@@ -1,0 +1,36 @@
+/* Timer specific CSS extracted from the original file */
+.pomoWrap { display: flex; align-items: center; gap: 14px; flex: 1; animation: fade 0.3s ease; }
+
+.pomoArc { position: relative; width: 68px; height: 68px; flex-shrink: 0; }
+.arcSvg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.arcBg { fill: none; stroke: rgba(255, 255, 255, 0.06); stroke-width: 5; }
+.arcFill { fill: none; stroke-width: 5; stroke-linecap: round; stroke: url(#arcGrad); transition: stroke-dashoffset 1s linear; }
+.pomoArcInner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; }
+
+.controlsWrap { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+.digitsRow { display: flex; align-items: baseline; gap: 8px; }
+.digits { font-family: var(--big); font-size: 52px; letter-spacing: 0.06em; line-height: 1; background: linear-gradient(135deg, var(--purple), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.phaseInfo { display: flex; flex-direction: column; }
+.phaseLabel { font-family: var(--mono); font-size: 8px; color: var(--t3); text-transform: uppercase; letter-spacing: 0.15em; margin-top: 2px; }
+.sessionCount { font-family: var(--mono); font-size: 8px; color: var(--t3); display: flex; align-items: center; gap: 6px; }
+
+.dots { display: flex; gap: 3px; }
+.sDot { width: 7px; height: 7px; border-radius: 50%; background: rgba(155, 89, 247, 0.25); border: 1px solid rgba(155, 89, 247, 0.3); }
+.sDotDone { background: var(--purple); box-shadow: 0 0 5px rgba(155, 89, 247, 0.5); }
+
+.modes { display: flex; gap: 4px; }
+.modeBtn { padding: 3px 9px; border-radius: 5px; font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; border: 1px solid transparent; color: var(--t3); transition: all 0.2s; }
+.modeBtn:hover { color: var(--t2); }
+.modeActive { background: rgba(0, 229, 255, 0.07); border-color: rgba(0, 229, 255, 0.18); color: var(--cyan); }
+
+.actionBtns { display: flex; gap: 5px; }
+.btn { flex: 1; padding: 7px; border-radius: var(--r1); text-align: center; font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; border: 1px solid; transition: all 0.2s; font-weight: 600; }
+.btnStart { background: rgba(155, 89, 247, 0.12); border-color: rgba(155, 89, 247, 0.3); color: var(--purple); }
+.btnStart:hover { background: rgba(155, 89, 247, 0.22); border-color: rgba(155, 89, 247, 0.5); }
+.btnPause { background: rgba(0, 255, 127, 0.1); border-color: rgba(0, 255, 127, 0.3); color: var(--green); box-shadow: inset 0 0 10px rgba(0, 255, 127, 0.1); }
+.btnReset { background: var(--glass); border-color: var(--b1); color: var(--t3); }
+.btnReset:hover { color: var(--t2); border-color: var(--b2); }
+.btnSkip { flex: 0.6; background: var(--glass); border-color: var(--b1); color: var(--t3); }
+
+@keyframes fade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }

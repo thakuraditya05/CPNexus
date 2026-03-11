@@ -1,0 +1,49 @@
+.panel { flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+
+.addBar { display: flex; gap: 6px; flex-shrink: 0; }
+.input { flex: 1; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--b1); border-radius: 6px; padding: 6px 10px; color: var(--t1); font-family: var(--mono); font-size: 10px; outline: none; transition: border-color 0.2s; }
+.input:focus { border-color: rgba(0, 229, 255, 0.3); }
+.input::placeholder { color: var(--t3); }
+
+.dateInput { width: 105px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--b1); border-radius: 6px; padding: 6px 8px; font-family: var(--mono); font-size: 10px; color: var(--t2); outline: none; cursor: pointer; }
+.dateInput:focus { border-color: rgba(0, 229, 255, 0.3); }
+
+.addBtn { padding: 6px 12px; background: rgba(0, 229, 255, 0.09); border: 1px solid rgba(0, 229, 255, 0.22); border-radius: 6px; font-family: var(--mono); font-size: 9px; color: var(--cyan); cursor: pointer; transition: all 0.2s; }
+.addBtn:hover { background: rgba(0, 229, 255, 0.16); }
+
+/* List & Items */
+.list { flex: 1; display: flex; flex-direction: column; gap: 5px; overflow-y: auto; padding-right: 2px; }
+.list::-webkit-scrollbar { width: 3px; }
+.list::-webkit-scrollbar-thumb { background: rgba(0, 229, 255, 0.15); border-radius: 2px; }
+
+.emptyMsg { text-align: center; color: var(--t3); font-family: var(--mono); font-size: 10px; margin-top: 20px; }
+
+.item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; background: var(--glass); border: 1px solid var(--b0); border-radius: var(--r2); transition: all 0.18s; position: relative; }
+.item:hover { background: var(--glass2); border-color: var(--b1); }
+
+/* Smart Styles based on state */
+.itemOverdue { border-color: rgba(255, 61, 90, 0.18); background: rgba(255, 61, 90, 0.03); }
+.itemToday { border-color: rgba(0, 229, 255, 0.18); background: rgba(0, 229, 255, 0.03); }
+.itemUpcoming { border-color: rgba(155, 89, 247, 0.15); }
+.itemDone { opacity: 0.6; border-color: rgba(0, 255, 127, 0.15); }
+
+/* Checkbox */
+.checkCircle { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--t3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; cursor: pointer; transition: all 0.2s; font-size: 10px; color: var(--void); font-weight: bold; }
+.checkCircle:hover { border-color: var(--cyan); }
+.checked { background: var(--green); border-color: var(--green); }
+
+.itemBody { flex: 1; min-width: 0; }
+.itemText { font-size: 10px; font-weight: 600; line-height: 1.4; color: var(--t1); transition: color 0.2s; }
+.textStrikethrough { text-decoration: line-through; color: var(--t3); }
+
+/* Badges */
+.itemMeta { margin-top: 4px; }
+.dateBadge { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 4px; font-family: var(--mono); font-size: 7px; font-weight: 600; }
+.dbOverdue { background: rgba(255, 61, 90, 0.1); border: 1px solid rgba(255, 61, 90, 0.2); color: var(--red); }
+.dbToday { background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.2); color: var(--cyan); }
+.dbSoon { background: rgba(155, 89, 247, 0.08); border: 1px solid rgba(155, 89, 247, 0.18); color: var(--purple); }
+.dbDone { background: rgba(0, 255, 127, 0.08); border: 1px solid rgba(0, 255, 127, 0.18); color: var(--green); }
+
+.delIcon { position: absolute; right: 8px; top: 8px; font-size: 10px; opacity: 0; color: var(--t3); cursor: pointer; transition: opacity 0.15s; }
+.item:hover .delIcon { opacity: 0.5; }
+.delIcon:hover { opacity: 1 !important; color: var(--red); }
