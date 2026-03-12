@@ -12,9 +12,9 @@
     "identity.email",
     "declarativeNetRequest", 
     "declarativeNetRequestWithHostAccess"
-
   ],
   "host_permissions": [
+    "<all_urls>",  
     "https://clist.by/*",
     "https://leetcode.com/*",
     "https://codeforces.com/*",

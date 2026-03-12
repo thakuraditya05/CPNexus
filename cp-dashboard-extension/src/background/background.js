@@ -1,5 +1,5 @@
-window.chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  
+// Listen for messages from our React App
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "START_ZEN_MODE") {
     const sitesToBlock = request.blocklist;
     console.log("Zen Mode Started. Blocking:", sitesToBlock);
@@ -11,18 +11,18 @@ window.chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         priority: 1,
         action: { type: "block" },
         condition: {
-          urlFilter: `*://${domain}/*`, // Blocks youtube.com, www.youtube.com, etc.
-          resourceTypes: ["main_frame"] // Blocks the main webpage from loading
+          urlFilter: `||${domain}`, // Perfect ad-blocker style
+          resourceTypes: ["main_frame"]
         }
       };
     });
 
     // Clear old rules and add new ones
-    window.chrome.declarativeNetRequest.updateDynamicRules({
+    chrome.declarativeNetRequest.updateDynamicRules({
       removeRuleIds: Array.from({length: 50}, (_, i) => i + 1), // clear IDs 1 to 50
       addRules: rules
     });
-
+    
     sendResponse({ status: "Blocking Active" });
   } 
   
@@ -30,10 +30,10 @@ window.chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log("Zen Mode Stopped. Removing blocks.");
     
     // Remove all blocking rules
-    window.chrome.declarativeNetRequest.updateDynamicRules({
+    chrome.declarativeNetRequest.updateDynamicRules({
       removeRuleIds: Array.from({length: 50}, (_, i) => i + 1)
     });
-
+    
     sendResponse({ status: "Blocking Removed" });
   }
 

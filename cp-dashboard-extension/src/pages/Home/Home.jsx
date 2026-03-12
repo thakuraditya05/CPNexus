@@ -10,7 +10,7 @@ import QuickLinks from '../../components/widgets/QuickLinks/QuickLinks';
 
 // Future Widgets (Placeholders for now)
 import FocusTimer from '../../components/widgets/FocusTimer/FocusTimer';
-// import TasksSummary from '../../components/widgets/TasksSummary/TasksSummary';
+import TasksSummary from '../../components/widgets/TasksSummary/TasksSummary';
 import DailyFuel from '../../components/widgets/DailyFuel/DailyFuel';
 import DualNotes from '../../components/widgets/DualNotes/DualNotes';
 
@@ -60,10 +60,8 @@ export default function Home() {
               <div className={`${styles.shDot} ${styles.sdOrange}`}></div>
               Today at a Glance
             </div>
-            <div className={styles.shAction}>Add Task →</div>
           </div>
-          <div className={styles.placeholderBox}>[ Widget: Tasks Summary ]</div>
-          {/* <TasksSummary /> */}
+          <TasksSummary />
         </div>
 
         {/* ── CARD 5: DAILY FUEL (Bottom Center) ── */}

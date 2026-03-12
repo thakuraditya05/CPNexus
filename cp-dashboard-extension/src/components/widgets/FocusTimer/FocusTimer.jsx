@@ -4,105 +4,152 @@ import styles from './FocusTimer.module.css';
 import TimerView from './TimerView';
 import BlocklistView from './BlocklistView';
 
-const FocusTimer = () => {
-  // View Toggle State
-  const [showBlocklist, setShowBlocklist] = useState(false);
+// ── INITIALIZATION LOGIC ──
+// Ye function naya tab khulne par check karta hai ki timer pehle se chal raha tha ya nahi
+const getInitialTimeLeft = () => {
+  const isRunning = localStorage.getItem('cp_zen_isRunning') === 'true';
+  const endTime = parseInt(localStorage.getItem('cp_zen_endTime'));
+  const savedTimeLeft = parseInt(localStorage.getItem('cp_zen_timeLeft'));
 
-  // Timer States
-  const [mode, setMode] = useState(45);
-  const [timeLeft, setTimeLeft] = useState(45 * 60);
-  const [isRunning, setIsRunning] = useState(false);
-  const [session, setSession] = useState(1);
+  if (isRunning && endTime) {
+    const remaining = Math.floor((endTime - Date.now()) / 1000);
+    return remaining > 0 ? remaining : 0; // Agar time bacha hai toh wo do, warna 0
+  }
+  return savedTimeLeft || (45 * 60);
+};
+
+const FocusTimer = () => {
+  const [showBlocklist, setShowBlocklist] = useState(false);
   const totalSessions = 4;
 
-  // Blocklist States (Persisted)
+  // ── PERSISTENT STATES ──
+  const [mode, setMode] = useState(() => parseInt(localStorage.getItem('cp_zen_mode')) || 45);
+  const [timeLeft, setTimeLeft] = useState(getInitialTimeLeft);
+  const [isRunning, setIsRunning] = useState(() => localStorage.getItem('cp_zen_isRunning') === 'true');
+  const [session, setSession] = useState(() => parseInt(localStorage.getItem('cp_zen_session')) || 1);
+
   const [blocklist, setBlocklist] = useState(() => {
     return JSON.parse(localStorage.getItem('cp_zen_blocklist')) || ['youtube.com', 'instagram.com'];
   });
 
+  // Blocklist save
   useEffect(() => {
     localStorage.setItem('cp_zen_blocklist', JSON.stringify(blocklist));
   }, [blocklist]);
 
-  // ── Helper Function: Unblock Sites ──
+  // ── CROSS-TAB SYNC (Agar 2 tab ek sath khule hon) ──
+  useEffect(() => {
+    const syncState = (e) => {
+      if (e.key === 'cp_zen_isRunning') setIsRunning(e.newValue === 'true');
+      if (e.key === 'cp_zen_timeLeft') setTimeLeft(parseInt(e.newValue) || 0);
+      if (e.key === 'cp_zen_mode') setMode(parseInt(e.newValue) || 45);
+      if (e.key === 'cp_zen_session') setSession(parseInt(e.newValue) || 1);
+    };
+    window.addEventListener('storage', syncState);
+    return () => window.removeEventListener('storage', syncState);
+  }, []);
+
+  // ── HELPER: UNBLOCK SITES ──
   const stopBlocking = () => {
     try {
       if (window.chrome && window.chrome.runtime) {
         window.chrome.runtime.sendMessage({ action: "STOP_ZEN_MODE" });
       }
     } catch (error) {
-      console.log("Chrome API not available (Local Dev Mode)", error);
+      console.log("Local Dev Mode - Unblocked");
     }
   };
 
-  // ── Master Timer Logic ──
+  // ── MASTER TIMER LOGIC (Timestamp Based) ──
   useEffect(() => {
     let interval = null;
     if (isRunning && timeLeft > 0) {
       interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
+        const end = parseInt(localStorage.getItem('cp_zen_endTime'));
+        if (end) {
+          const remaining = Math.floor((end - Date.now()) / 1000);
+          if (remaining >= 0) {
+            setTimeLeft(remaining);
+            localStorage.setItem('cp_zen_timeLeft', remaining);
+          } else {
+            // Timer Finished!
+            clearInterval(interval);
+            setIsRunning(false);
+            setTimeLeft(0);
+            localStorage.setItem('cp_zen_isRunning', 'false');
+            localStorage.setItem('cp_zen_timeLeft', 0);
+            localStorage.removeItem('cp_zen_endTime');
+            stopBlocking();
+          }
+        }
       }, 1000);
-    } else if (timeLeft === 0 && isRunning) {
-      clearInterval(interval);
-      setIsRunning(false);
-      stopBlocking(); // <-- TIMER KHATAM HOTE HI UNBLOCK
-      // Logic for break or next session can be added here
     }
     return () => clearInterval(interval);
   }, [isRunning, timeLeft]);
 
-
-  
-  // ── Handlers for Timer View ──
+  // ── HANDLERS ──
   const toggleTimer = () => {
     const newIsRunning = !isRunning;
     setIsRunning(newIsRunning);
+    localStorage.setItem('cp_zen_isRunning', newIsRunning);
 
-    // Send message to background.js to start/stop blocking
-    try {
-      if (window.chrome && window.chrome.runtime) {
-        if (newIsRunning) {
+    if (newIsRunning) {
+      // STARTING: Future end time calculate karke save karo
+      const endTime = Date.now() + (timeLeft * 1000);
+      localStorage.setItem('cp_zen_endTime', endTime);
+      try {
+        if (window.chrome && window.chrome.runtime) {
           window.chrome.runtime.sendMessage({ action: "START_ZEN_MODE", blocklist: blocklist });
-        } else {
-          stopBlocking();
         }
-      }
-    } catch (error) {
-      console.log("Chrome API not available (Local Dev Mode)", error);
+      } catch (e) {}
+    } else {
+      // PAUSING
+      localStorage.removeItem('cp_zen_endTime');
+      localStorage.setItem('cp_zen_timeLeft', timeLeft);
+      stopBlocking();
     }
   };
 
   const resetTimer = () => {
     setIsRunning(false);
     setTimeLeft(mode * 60);
-    stopBlocking(); // Stop blocking when reset
+    localStorage.setItem('cp_zen_isRunning', 'false');
+    localStorage.removeItem('cp_zen_endTime');
+    localStorage.setItem('cp_zen_timeLeft', mode * 60);
+    stopBlocking();
   };
 
-  const handleSetMode = (newMode) => { 
-    setIsRunning(false); 
-    setMode(newMode); 
-    setTimeLeft(newMode * 60); 
-    stopBlocking(); // Stop blocking when mode changes mid-session
+  const handleSetMode = (newMode) => {
+    setIsRunning(false);
+    setMode(newMode);
+    setTimeLeft(newMode * 60);
+    localStorage.setItem('cp_zen_mode', newMode);
+    localStorage.setItem('cp_zen_isRunning', 'false');
+    localStorage.removeItem('cp_zen_endTime');
+    localStorage.setItem('cp_zen_timeLeft', newMode * 60);
+    stopBlocking();
   };
 
   const skipSession = () => {
     setIsRunning(false);
-    setSession(session < totalSessions ? session + 1 : 1);
+    const nextSession = session < totalSessions ? session + 1 : 1;
+    setSession(nextSession);
     setTimeLeft(mode * 60);
-    stopBlocking(); // Stop blocking when skipping session
+    localStorage.setItem('cp_zen_session', nextSession);
+    localStorage.setItem('cp_zen_isRunning', 'false');
+    localStorage.removeItem('cp_zen_endTime');
+    localStorage.setItem('cp_zen_timeLeft', mode * 60);
+    stopBlocking();
   };
 
   return (
     <div className={styles.container}>
-      
-      {/* ── HEADER (Always Visible) ── */}
+      {/* ── HEADER ── */}
       <div className={styles.header}>
         <div className={styles.title}>
           <div className={styles.dot}></div>
           Focus Timer
         </div>
-        
-        {/* Toggle Button */}
         <div 
           className={`${styles.zenBadge} ${isRunning ? styles.zenOn : styles.zenOff}`}
           onClick={() => !isRunning && setShowBlocklist(!showBlocklist)}
@@ -112,7 +159,7 @@ const FocusTimer = () => {
         </div>
       </div>
 
-      {/* ── CONDITIONAL RENDERING ── */}
+      {/* ── VIEWS ── */}
       {!showBlocklist ? (
         <TimerView 
           mode={mode} setMode={handleSetMode}
@@ -127,7 +174,6 @@ const FocusTimer = () => {
           closeView={() => setShowBlocklist(false)} 
         />
       )}
-
     </div>
   );
 };

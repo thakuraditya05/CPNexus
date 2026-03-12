@@ -1,0 +1,152 @@
+.tasksSummary {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── STATS ROW ── */
+.taskStatRow {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.tstat {
+  flex: 1;
+  text-align: center;
+  background: var(--glass);
+  border: 1px solid var(--b0);
+  border-radius: var(--r1);
+  padding: 6px;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.tstat:hover {
+  transform: translateY(-2px);
+  background: var(--glass2);
+}
+
+.tstatV {
+  font-family: var(--big);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.tstatL {
+  font-family: var(--mono);
+  font-size: 7px;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 1px;
+}
+
+/* ── PROGRESS BAR ── */
+.progressBarWrap {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progressText {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--t3);
+  text-align: right;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+/* ── TASK LIST ── */
+.todayTasks {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.todayTasks::-webkit-scrollbar {
+  width: 3px;
+}
+.todayTasks::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+/* Individual Task Item */
+.ttItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  background: var(--glass);
+  border: 1px solid var(--b0);
+  border-radius: var(--r1);
+  transition: background 0.2s;
+}
+.ttItem:hover {
+  background: var(--glass2);
+}
+
+.ttUrgent {
+  border-color: rgba(255, 61, 90, 0.15);
+  background: rgba(255, 61, 90, 0.02);
+}
+
+/* Dots */
+.ttDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dotRed { background: var(--red); box-shadow: 0 0 4px var(--red); }
+.dotCyan { background: var(--cyan); box-shadow: 0 0 4px var(--cyan); }
+.dotGreen { background: var(--green); box-shadow: 0 0 4px var(--green); }
+.dotPurple { background: var(--purple); box-shadow: 0 0 4px var(--purple); }
+
+/* Text Styles */
+.ttText {
+  font-size: 9px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--t1);
+}
+
+.textStrikethrough {
+  text-decoration: line-through;
+  color: var(--t3);
+  opacity: 0.8;
+}
+
+.ttTime {
+  font-family: var(--mono);
+  font-size: 7px;
+  color: var(--t3);
+  flex-shrink: 0;
+}
+
+/* Utility Colors */
+.cGreen { color: var(--green); }
+.cYellow { color: var(--yellow); }
+.cRed { color: var(--red); }
+.textRed { color: var(--red); }
+.textGreen { color: var(--green); }
